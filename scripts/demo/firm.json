@@ -1,0 +1,36 @@
+{
+  "slug": "demo",
+  "name": "Lumilex & Partners",
+  "shortName": "Lumilex & Partners",
+  "primaryDomain": "demo.lumilex.co",
+  "invoicePrefix": "LXP",
+  "admin": {
+    "email": "grace.bautista@demo.lumilex.co",
+    "name": "Grace Bautista",
+    "position": "Office Manager"
+  },
+  "branding": {
+    "documentName": "LUMILEX & PARTNERS",
+    "palette": { "primary": "#1B2F45", "accent": "#B98D3E" },
+    "nameLines": ["Attorneys and Counsellors at Law"],
+    "tagline": "Corporate · Litigation · Regulatory",
+    "fontSet": "standard"
+  },
+  "email": {
+    "fromName": "Lumilex & Partners",
+    "fromAddress": "",
+    "financeAddress": "",
+    "ipAddress": "",
+    "complianceAddress": "",
+    "ownedDomains": ["demo.lumilex.co"]
+  },
+  "features": [
+    "portal",
+    "drafting",
+    "red_team",
+    "ai_analysis",
+    "ai_search",
+    "ai_assistant",
+    "ai_client_chat"
+  ]
+}

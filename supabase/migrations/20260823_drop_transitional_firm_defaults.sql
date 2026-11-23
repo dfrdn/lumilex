@@ -1,0 +1,145 @@
+-- Drop the transitional firm_id column DEFAULTs.
+--
+-- Every tenant table carried `default '00000000-0000-4000-8000-000000000001'`
+-- (the dev firm) so that pre-tenancy inserts kept working while the app was
+-- being taught to stamp firm_id. That default is the booby trap standing
+-- between this instance and a second firm: any insert that forgets firm_id is
+-- silently filed under firm 1 instead of failing.
+--
+-- firm_id stays NOT NULL, so from here an insert that omits it raises 23502.
+-- Explicit per-table statements rather than a DO-loop so the change is
+-- reviewable and re-runnable: `drop default` is a no-op when none is set.
+--
+-- Generated from information_schema.columns WHERE column_name = 'firm_id'
+-- AND column_default IS NOT NULL (130 tables).
+
+alter table public.affidavit_review_comments alter column firm_id drop default;
+alter table public.affidavit_reviews alter column firm_id drop default;
+alter table public.agent_proposals alter column firm_id drop default;
+alter table public.agent_runs alter column firm_id drop default;
+alter table public.announcements alter column firm_id drop default;
+alter table public.assistant_announcements alter column firm_id drop default;
+alter table public.assistant_digest_log alter column firm_id drop default;
+alter table public.assistant_digest_settings alter column firm_id drop default;
+alter table public.assistant_messages alter column firm_id drop default;
+alter table public.assistant_preferences alter column firm_id drop default;
+alter table public.assistant_reminders alter column firm_id drop default;
+alter table public.attendance alter column firm_id drop default;
+alter table public.audit_log alter column firm_id drop default;
+alter table public.backfill_state alter column firm_id drop default;
+alter table public.billing_rates alter column firm_id drop default;
+alter table public.calendar_sync_events alter column firm_id drop default;
+alter table public.chat_channels alter column firm_id drop default;
+alter table public.chat_messages alter column firm_id drop default;
+alter table public.chat_mutes alter column firm_id drop default;
+alter table public.chat_push_tokens alter column firm_id drop default;
+alter table public.chat_reactions alter column firm_id drop default;
+alter table public.chat_read_receipts alter column firm_id drop default;
+alter table public.client_code_counters alter column firm_id drop default;
+alter table public.client_deposits alter column firm_id drop default;
+alter table public.client_intakes alter column firm_id drop default;
+alter table public.client_partner_notes alter column firm_id drop default;
+alter table public.client_users alter column firm_id drop default;
+alter table public.clients alter column firm_id drop default;
+alter table public.corporation_affiliations alter column firm_id drop default;
+alter table public.corporation_files alter column firm_id drop default;
+alter table public.corporation_meetings alter column firm_id drop default;
+alter table public.corporation_persons alter column firm_id drop default;
+alter table public.corporation_share_classes alter column firm_id drop default;
+alter table public.corporations alter column firm_id drop default;
+alter table public.deadline_chain_items alter column firm_id drop default;
+alter table public.deadline_chains alter column firm_id drop default;
+alter table public.deliverable_actions alter column firm_id drop default;
+alter table public.deliverable_comment_reactions alter column firm_id drop default;
+alter table public.deliverable_comments alter column firm_id drop default;
+alter table public.deliverable_files alter column firm_id drop default;
+alter table public.deliverable_version_reactions alter column firm_id drop default;
+alter table public.deliverables alter column firm_id drop default;
+alter table public.directory alter column firm_id drop default;
+alter table public.document_templates alter column firm_id drop default;
+alter table public.drafting_style_profiles alter column firm_id drop default;
+alter table public.dtr alter column firm_id drop default;
+alter table public.dtr_revision_comments alter column firm_id drop default;
+alter table public.dtr_revision_reviews alter column firm_id drop default;
+alter table public.dtr_revisions alter column firm_id drop default;
+alter table public.email_attachments alter column firm_id drop default;
+alter table public.email_mailbox_copies alter column firm_id drop default;
+alter table public.email_mailboxes alter column firm_id drop default;
+alter table public.email_matter_links alter column firm_id drop default;
+alter table public.email_signatures alter column firm_id drop default;
+alter table public.email_templates alter column firm_id drop default;
+alter table public.emails alter column firm_id drop default;
+alter table public.embeddings alter column firm_id drop default;
+alter table public.engagement_proposals alter column firm_id drop default;
+alter table public.engagement_signatures alter column firm_id drop default;
+alter table public.entity_comment_reactions alter column firm_id drop default;
+alter table public.entity_comments alter column firm_id drop default;
+alter table public.enum_options alter column firm_id drop default;
+alter table public.evaluation_period_discretionary_bonuses alter column firm_id drop default;
+alter table public.evaluation_period_other_bonuses alter column firm_id drop default;
+alter table public.evaluation_periods alter column firm_id drop default;
+alter table public.evaluation_scores alter column firm_id drop default;
+alter table public.evaluations alter column firm_id drop default;
+alter table public.exhibits alter column firm_id drop default;
+alter table public.expense_revisions alter column firm_id drop default;
+alter table public.fee_schedules alter column firm_id drop default;
+alter table public.feedbacks alter column firm_id drop default;
+alter table public.file_analyses alter column firm_id drop default;
+alter table public.file_requests alter column firm_id drop default;
+alter table public.files alter column firm_id drop default;
+alter table public.firm_expense_templates alter column firm_id drop default;
+alter table public.firm_expenses alter column firm_id drop default;
+alter table public.firm_profiles alter column firm_id drop default;
+alter table public.generated_documents alter column firm_id drop default;
+alter table public.hearings alter column firm_id drop default;
+alter table public.intake_stage_history alter column firm_id drop default;
+alter table public.intake_submissions alter column firm_id drop default;
+alter table public.invoice_number_counters alter column firm_id drop default;
+alter table public.invoice_payments alter column firm_id drop default;
+alter table public.invoices alter column firm_id drop default;
+alter table public.issuance_scrape_runs alter column firm_id drop default;
+alter table public.issuances alter column firm_id drop default;
+alter table public.kb_jobs alter column firm_id drop default;
+alter table public.kb_page_citations alter column firm_id drop default;
+alter table public.kb_page_matters alter column firm_id drop default;
+alter table public.kb_pages alter column firm_id drop default;
+alter table public.knowledge_searches alter column firm_id drop default;
+alter table public.leaves alter column firm_id drop default;
+alter table public.liaison_tasks alter column firm_id drop default;
+alter table public.matter_action_entries alter column firm_id drop default;
+alter table public.matter_billing_actions alter column firm_id drop default;
+alter table public.matter_billing_configs alter column firm_id drop default;
+alter table public.matter_billing_milestones alter column firm_id drop default;
+alter table public.matter_exec_summaries alter column firm_id drop default;
+alter table public.matter_expenses alter column firm_id drop default;
+alter table public.matter_group_summaries alter column firm_id drop default;
+alter table public.matter_health alter column firm_id drop default;
+alter table public.matter_sol alter column firm_id drop default;
+alter table public.matter_summaries alter column firm_id drop default;
+alter table public.matters alter column firm_id drop default;
+alter table public.meetings alter column firm_id drop default;
+alter table public.notification_mutes alter column firm_id drop default;
+alter table public.notifications alter column firm_id drop default;
+alter table public.parties alter column firm_id drop default;
+alter table public.partner_matter_annotations alter column firm_id drop default;
+alter table public.pleading_red_team_comments alter column firm_id drop default;
+alter table public.pleading_red_teams alter column firm_id drop default;
+alter table public.portal_chat_messages alter column firm_id drop default;
+alter table public.push_subscriptions alter column firm_id drop default;
+alter table public.reimbursements alter column firm_id drop default;
+alter table public.resolution_templates alter column firm_id drop default;
+alter table public.resolutions alter column firm_id drop default;
+alter table public.resources alter column firm_id drop default;
+alter table public.saved_reports alter column firm_id drop default;
+alter table public.scope_templates alter column firm_id drop default;
+alter table public.sla_breaches alter column firm_id drop default;
+alter table public.sla_rules alter column firm_id drop default;
+alter table public.tasks alter column firm_id drop default;
+alter table public.team alter column firm_id drop default;
+alter table public.telegram_link_codes alter column firm_id drop default;
+alter table public.telegram_messages alter column firm_id drop default;
+alter table public.trademark_client_reports alter column firm_id drop default;
+alter table public.trademark_files alter column firm_id drop default;
+alter table public.trademarks alter column firm_id drop default;
+alter table public.transportation_zones alter column firm_id drop default;
+alter table public.user_preferences alter column firm_id drop default;

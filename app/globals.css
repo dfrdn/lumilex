@@ -1,0 +1,561 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #F7F5F0;
+  --foreground: #1A1816;
+  --card-bg: #FFFFFF;
+  --card-bg-hover: #FDFCFA;
+  --subtle-bg: #F2EFEA;
+  --border-color: rgba(168, 162, 150, 0.18);
+  --border-hover: rgba(168, 162, 150, 0.3);
+  --text-primary: #1A1816;
+  --text-secondary: #78736A;
+  --text-muted: #A8A29E;
+}
+
+.dark {
+  --background: #0F0F0F;
+  --foreground: #F5F0EB;
+  --card-bg: #1C1C1E;
+  --card-bg-hover: #232326;
+  --subtle-bg: #171717;
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --text-primary: #F5F0EB;
+  --text-secondary: #9B978F;
+  --text-muted: #78746C;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card-bg);
+  --color-card-hover: var(--card-bg-hover);
+  --color-subtle: var(--subtle-bg);
+  --font-sans: var(--font-dm-sans);
+  --font-serif: var(--font-playfair);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* ── Navy palette — deep navy for dark surfaces ─────────────── */
+  --color-navy-50:  #F0F4F8;
+  --color-navy-100: #D9E2EC;
+  --color-navy-200: #BCCCDC;
+  --color-navy-300: #9FB3C8;
+  --color-navy-400: #829AB1;
+  --color-navy-500: #627D98;
+  --color-navy-600: #486581;
+  --color-navy-700: #334E68;
+  --color-navy-800: #243B53;
+  --color-navy-900: #102A43;
+  --color-navy-950: #0A1628;
+
+  /* ── Gold palette — refined gold for accents ──────────────────── */
+  --color-gold-50:  #FBF8F0;
+  --color-gold-100: #F5EDD6;
+  --color-gold-200: #EBDAAE;
+  --color-gold-300: #DCC47A;
+  --color-gold-400: #C9A84C;
+  --color-gold-500: #B8963A;
+  --color-gold-600: #A0822E;
+  --color-gold-700: #7D6524;
+  --color-gold-800: #5A481A;
+  --color-gold-900: #382D10;
+  --color-gold-950: #1F1808;
+
+  /* ── Semantic tag colors ────────────────────────────────────── */
+  --color-tag-filing: #D4943A;
+  --color-tag-client: #4A9B8E;
+  --color-tag-internal: #8B7EC8;
+  --color-tag-external: #5B9BD5;
+
+  /* Shadow tokens */
+  --shadow-card: 0 1px 3px 0 rgb(120 100 70 / 0.06), 0 1px 2px -1px rgb(120 100 70 / 0.04);
+  --shadow-card-hover: 0 4px 16px -2px rgb(120 100 70 / 0.1), 0 2px 6px -2px rgb(120 100 70 / 0.06);
+  --shadow-elevated: 0 8px 30px -4px rgb(120 100 70 / 0.12), 0 4px 10px -4px rgb(120 100 70 / 0.06);
+  --shadow-nav: 0 1px 3px 0 rgb(120 100 70 / 0.05);
+}
+
+.dark {
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.15);
+  --shadow-card-hover: 0 4px 12px rgb(0 0 0 / 0.4), 0 16px 48px rgb(0 0 0 / 0.2);
+  --shadow-elevated: 0 8px 30px rgb(0 0 0 / 0.5), 0 16px 60px rgb(0 0 0 / 0.3);
+  --shadow-nav: 0 1px 3px 0 rgb(0 0 0 / 0.2);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Tailwind v4 dropped the default cursor:pointer on buttons. Restore it
+ * for native buttons + ARIA buttons so every clickable element across the
+ * app reads as clickable. :disabled keeps the not-allowed cursor. */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+summary {
+  cursor: pointer;
+}
+
+/* ── Ambient background effects ───────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark body::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(201, 168, 76, 0.025) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139, 126, 200, 0.015) 0%, transparent 60%);
+}
+
+/* Subtle noise overlay for dark mode */
+.dark body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Chat microinteraction keyframes ──────────────────────────── */
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes emoji-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.4); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+@keyframes fade-scale-in {
+  from { opacity: 0; transform: scale(0.94) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes badge-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(59,130,246,0); }
+}
+@keyframes scroll-btn-in {
+  from { opacity: 0; transform: translateY(8px) translateX(-50%); }
+  to   { opacity: 1; transform: translateY(0) translateX(-50%); }
+}
+
+.chat-msg-in      { animation: msg-in 0.2s ease-out both; }
+.chat-emoji-pop   { animation: emoji-pop 0.3s ease-out; }
+.chat-popover-in  { animation: fade-scale-in 0.15s ease-out both; }
+.chat-badge-ring  { animation: badge-ring 2s ease-in-out infinite; }
+.chat-scroll-btn  { animation: scroll-btn-in 0.2s ease-out both; }
+
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f0ede7 25%, #e5e2da 50%, #f0ede7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+.dark .skeleton-shimmer {
+  background: linear-gradient(90deg, #1C1C1E 25%, #2A2A2D 50%, #1C1C1E 75%);
+  background-size: 200% 100%;
+}
+
+/* ── Entrance animations ────────────────────────────────────────── */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 0 4px rgba(212, 106, 106, 0.08); }
+}
+
+.animate-fade-in   { animation: fade-in  300ms ease-out both; }
+.animate-fade-up   { animation: fade-up  500ms ease-out both; }
+.animate-fade-down { animation: fade-down 300ms ease-out both; }
+.animate-scale-in  { animation: scale-in 300ms ease-out both; }
+.animate-gentle-pulse { animation: gentle-pulse 3s ease-in-out infinite; }
+
+/* Attention-grabbing entrance for the matter-group banner: drops in from
+   above, overshoots slightly, then pulses a navy glow ring to draw the eye. */
+@keyframes banner-attention-in {
+  0%   { opacity: 0; transform: translateY(-32px) scale(0.98); box-shadow: 0 0 0 0 rgba(98, 125, 152, 0); }
+  50%  { opacity: 1; transform: translateY(4px) scale(1.01); box-shadow: 0 0 0 0 rgba(98, 125, 152, 0); }
+  62%  { transform: translateY(0) scale(1); box-shadow: 0 0 0 4px rgba(98, 125, 152, 0.14); }
+  72%  { box-shadow: 0 0 0 10px rgba(98, 125, 152, 0.24); }
+  90%  { box-shadow: 0 0 0 4px rgba(98, 125, 152, 0.08); }
+  100% { transform: translateY(0) scale(1); box-shadow: 0 0 0 0 rgba(98, 125, 152, 0); }
+}
+.banner-attention-in {
+  animation: banner-attention-in 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) 150ms both;
+}
+
+/* Staggered children — up to 10 children */
+.stagger-children > *:nth-child(1)  { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2)  { animation-delay: 60ms; }
+.stagger-children > *:nth-child(3)  { animation-delay: 120ms; }
+.stagger-children > *:nth-child(4)  { animation-delay: 180ms; }
+.stagger-children > *:nth-child(5)  { animation-delay: 240ms; }
+.stagger-children > *:nth-child(6)  { animation-delay: 300ms; }
+.stagger-children > *:nth-child(7)  { animation-delay: 360ms; }
+.stagger-children > *:nth-child(8)  { animation-delay: 420ms; }
+.stagger-children > *:nth-child(9)  { animation-delay: 480ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 540ms; }
+
+/* Staggered slide-in from right — buttons start hidden, revealed on group-hover via transition */
+.stagger-slide button {
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 150ms ease-out, transform 150ms ease-out, box-shadow 200ms ease-out, border-color 200ms ease-out, background 200ms ease-out, color 200ms ease-out;
+}
+.group:hover .stagger-slide button {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+}
+.group:hover .stagger-slide button.action-lift:hover {
+  transform: translateX(0) translateY(-1px);
+}
+.group:hover .stagger-slide button.action-lift:active {
+  transform: translateX(0) translateY(0);
+}
+.stagger-slide button:nth-last-child(1) { transition-delay: 0ms; }
+.stagger-slide button:nth-last-child(2) { transition-delay: 40ms; }
+.stagger-slide button:nth-last-child(3) { transition-delay: 80ms; }
+.stagger-slide button:nth-last-child(4) { transition-delay: 120ms; }
+.stagger-slide button:nth-last-child(5) { transition-delay: 160ms; }
+.stagger-slide button:nth-last-child(6) { transition-delay: 200ms; }
+
+/* ── Smooth collapse / expand (CSS grid trick) ─────────────────── */
+
+.collapse-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms ease-out;
+}
+.collapse-grid[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.collapse-grid > .collapse-inner {
+  overflow: hidden;
+}
+
+/* ── Modal overlay / dialog ────────────────────────────────────── */
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-overlay { animation: overlay-in 200ms ease-out both; }
+.animate-dialog  { animation: dialog-in  250ms ease-out both; }
+
+/* ── Scrollbar styling ────────────────────────────────────────── */
+
+/* Hide scrollbar for horizontal scroll strips */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Subtle scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d6d3cd; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+.dark ::-webkit-scrollbar-thumb { background: #2A2A2D; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #3A3A3D; }
+
+/* ── DOCX preview ────────────────────────────────────────────── */
+.docx-container .docx-preview-wrapper {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.docx-container .docx-preview-wrapper > section.docx {
+  background: white;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
+  border-radius: 4px;
+}
+
+/* ── Design system utility classes ────────────────────────────── */
+
+/* Gold accent underline used on logos/headings */
+.accent-underline {
+  position: relative;
+}
+.accent-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-gold-400);
+  border-radius: 1px;
+}
+
+/* Shimmer line for today indicators */
+@keyframes shimmer-line {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.today-shimmer {
+  animation: shimmer-line 2s ease-in-out infinite;
+}
+
+/* ── Quick action button hover lift ────────────────────────────── */
+.action-lift {
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out, border-color 200ms ease-out, background 200ms ease-out, color 200ms ease-out;
+}
+.action-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px -2px rgb(0 0 0 / 0.08);
+}
+.action-lift:active {
+  transform: translateY(0px);
+  box-shadow: none;
+  transition-duration: 80ms;
+}
+.dark .action-lift:hover {
+  box-shadow: 0 2px 12px -2px rgb(0 0 0 / 0.3);
+}
+
+/* ── Section divider label ─────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+/* ── Greeting gold accent bar ──────────────────────────────────── */
+@keyframes accent-draw {
+  from { width: 0; }
+  to   { width: 3rem; }
+}
+.greeting-accent {
+  height: 2px;
+  width: 3rem;
+  background: linear-gradient(90deg, var(--color-gold-400), var(--color-gold-300));
+  border-radius: 1px;
+  animation: accent-draw 600ms ease-out 200ms both;
+}
+
+/* ── Stat card number counter effect ───────────────────────────── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.stat-number {
+  animation: count-up 400ms ease-out both;
+}
+
+/* ── Global microinteraction utilities ─────────────────────────── */
+
+/* Sidebar nav active left-bar indicator */
+.nav-active-bar {
+  position: relative;
+}
+.nav-active-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 2.5px;
+  background: var(--color-gold-400, #C8A96E);
+  border-radius: 2px;
+  animation: nav-bar-in 0.18s ease both;
+}
+@keyframes nav-bar-in {
+  from { transform: scaleY(0); opacity: 0; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+/* Button/card press feedback */
+.press {
+  transition: transform 80ms ease, opacity 80ms ease;
+}
+.press:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+
+/* Hover lift for stat/metric cards */
+.hover-lift {
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Page-level section stagger (5 children) */
+.page-stagger > * { animation: fade-up 0.35s ease both; }
+.page-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.page-stagger > *:nth-child(2) { animation-delay: 60ms; }
+.page-stagger > *:nth-child(3) { animation-delay: 120ms; }
+.page-stagger > *:nth-child(4) { animation-delay: 180ms; }
+.page-stagger > *:nth-child(5) { animation-delay: 240ms; }
+
+/* Inline field edit microinteractions */
+.animate-field-save {
+  animation: field-save 0.3s ease;
+}
+@keyframes field-save {
+  0% { background-color: transparent; }
+  30% { background-color: rgb(16 185 129 / 0.08); }
+  100% { background-color: transparent; }
+}
+.animate-field-error {
+  animation: field-error 0.4s ease;
+}
+@keyframes field-error {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+/* ── FAB radial dial-in (used by QuickCreateFAB) ──────────────── */
+@keyframes fab-dial-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.8); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-fab-dial-in {
+  animation: fab-dial-in 0.2s ease-out both;
+}
+
+/* ── Reduced-motion guard ─────────────────────────────────────── */
+/* Honors OS-level "Reduce motion" preference. Collapses all
+   animations/transitions to a near-instant state so motion-sensitive
+   users aren't subjected to fades, slides, shakes, or pulses. Any
+   future component inherits this automatically. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print ────────────────────────────────────────────────────── */
+/* Printable documents (e.g. the client statement of account) stay on a
+   clean white page regardless of the active theme. Elements marked with
+   Tailwind's `print:hidden` are already removed from the printout. */
+@media print {
+  html, body {
+    background: #fff !important;
+  }
+}
+
+/* "Fill in" target: a brief gold glow on the field it lands on (lib/focus-field.ts).
+   Applied to the control itself, so it follows the control's own rounded corners. */
+@keyframes field-flash {
+  0% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0), 0 0 0 0 rgba(201, 168, 76, 0); }
+  12% { box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.9), 0 0 0 3px rgba(201, 168, 76, 0.15); }
+  100% { box-shadow: 0 0 0 1px rgba(201, 168, 76, 0), 0 0 0 3px rgba(201, 168, 76, 0); }
+}
+.field-flash {
+  animation: field-flash 2.4s ease-out;
+}
+
+/* ── Microinteractions ──────────────────────────────────────────────────────
+   Small, quick, and never in the way. `--i` staggers a list (style={{'--i': n}}).
+   All of it stands still for anyone who has asked their system for less motion. */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.rise-in {
+  animation: rise-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(min(var(--i, 0), 12) * 35ms);
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+/* A progress fill that draws itself in from the left. */
+.grow-x {
+  transform-origin: left center;
+  animation: grow-x 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(min(var(--i, 0), 12) * 35ms + 120ms);
+}
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(-4px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+/* An inline editor or panel opening in place. */
+.reveal { animation: reveal 220ms ease-out both; }
+/* A card that answers the pointer. */
+.lift { transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease; }
+.lift:hover { transform: translateY(-1px); box-shadow: 0 10px 24px -16px rgba(15, 23, 42, 0.35); }
+.dark .lift:hover { box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.8); }
+/* A button that gives a little under the finger. */
+.press { transition: transform 120ms ease; }
+.press:active { transform: scale(0.97); }
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+/* A state that just changed: a toggle flipping, a count moving. */
+.pop { animation: pop 280ms ease-out; }
+@keyframes soft-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.35); }
+  50% { box-shadow: 0 0 0 4px rgba(201, 168, 76, 0); }
+}
+/* Something waiting on the reader. */
+.soft-pulse { animation: soft-pulse 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .rise-in, .grow-x, .reveal, .pop, .soft-pulse { animation: none; }
+  .lift:hover, .press:active { transform: none; }
+}

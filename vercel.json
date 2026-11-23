@@ -1,0 +1,57 @@
+{
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ]",
+  "crons": [
+    {
+      "path": "/api/matter-summary/refresh-stale?limit=20",
+      "schedule": "0 22 * * *"
+    },
+    {
+      "path": "/api/matter-health/refresh-stale?limit=40",
+      "schedule": "30 */6 * * *"
+    },
+    {
+      "path": "/api/matters/auto-archive",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/firm-expense-recurring",
+      "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-generated-docs",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/issuances-scrape",
+      "schedule": "0 21 * * *"
+    },
+    {
+      "path": "/api/notifications/generate",
+      "schedule": "45 21 * * *"
+    },
+    {
+      "path": "/api/notifications/email-briefer",
+      "schedule": "0 22 * * 0-4"
+    },
+    {
+      "path": "/api/file-analysis/backfill",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/admin/sharepoint-backfill",
+      "schedule": "*/3 * * * *"
+    },
+    {
+      "path": "/api/cron/corporate-obligations",
+      "schedule": "0 19 * * *"
+    },
+    {
+      "path": "/api/cron/subject-status",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/sla/evaluate",
+      "schedule": "0 23 * * *"
+    }
+  ]
+}

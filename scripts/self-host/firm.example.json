@@ -1,0 +1,28 @@
+{
+  "slug": "example",
+  "name": "Example Law Office",
+  "shortName": "Example Law",
+  "primaryDomain": "localhost",
+  "invoicePrefix": "EXL",
+  "admin": {
+    "email": "admin@example.test",
+    "name": "First Admin",
+    "position": "Office Manager"
+  },
+  "branding": {
+    "documentName": "EXAMPLE LAW OFFICE",
+    "palette": { "primary": "#23395B", "accent": "#A8763E" },
+    "nameLines": ["Example Law Office"],
+    "tagline": "",
+    "fontSet": "standard"
+  },
+  "email": {
+    "fromName": "Example Law Office",
+    "fromAddress": "",
+    "financeAddress": "",
+    "ipAddress": "",
+    "complianceAddress": "",
+    "ownedDomains": []
+  },
+  "features": ["portal"]
+}

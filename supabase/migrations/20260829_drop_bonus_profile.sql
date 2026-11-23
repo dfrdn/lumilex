@@ -1,0 +1,25 @@
+-- Drop team.bonus_profile.
+--
+-- It carried one of two values, and one of them was a person's initials:
+-- `bonusProfile: 'standard' | 'qzx'`, where 'qzx' selected a different
+-- indicative bonus band (0.25–0.5 months of salary against 0.5–2.0) and
+-- rendered a literal "QZX" badge on the lawyer detail page. One named
+-- individual's compensation arrangement, encoded as a product enum on a
+-- surface a tenant's partners would see.
+--
+-- The whole "Bonus profile / indicative band" card went rather than just the
+-- 'qzx' branch: the surviving 'standard' band was equally one firm's
+-- compensation policy hardcoded in a component, and with the evaluations
+-- surface gone (20260829_drop_evaluations.sql) there is no bonus process
+-- behind the range it displayed. The Monthly salary card stays — salary is
+-- real, and drives finance's profitability labor costs.
+--
+-- Verified: the only readers were app/api/partner/lawyers/[personId]/route.ts
+-- and components/partner-lawyers/LawyerDetailTab.tsx, both updated in the same
+-- change; one team row exists and it was 'standard'.
+--
+-- This is the second half of the de-branding lesson recorded in
+-- docs/multitenancy-followups.md §10a: `verify:brand` greps for the firm's
+-- NAME, so a real person encoded as initials passes every green run of it.
+
+ALTER TABLE public.team DROP COLUMN IF EXISTS bonus_profile;

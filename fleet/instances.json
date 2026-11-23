@@ -1,0 +1,12 @@
+{
+  "instances": [
+    {
+      "slug": "test",
+      "role": "test",
+      "supabaseProjectRef": "jmwcsldskeycpgqtbcyx",
+      "vercelProject": "lumilex-demo",
+      "primaryDomain": "demo.lumilex.co",
+      "note": "The probe suite's project. verify:rls, verify:storage and verify:platform provision and delete real firms here, so no paying firm's data ever lands in it. Every migration reaches this project first. It also holds the public demo's fictional firm (scripts/demo/firm.json), served by the lumilex-demo Vercel project at demo.lumilex.co; the probes only ever delete their own probe-* firms."
+    }
+  ]
+}

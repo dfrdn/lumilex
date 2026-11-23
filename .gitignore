@@ -1,0 +1,61 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.local.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+.claude/*
+!.claude/skills/
+
+# supabase cli cache
+supabase/.temp/
+
+# claude-mem memory cache
+AGENTS.md
+.gstack/
+
+# scripts/render-brand-samples.ts output
+.brand-samples/
+
+# the origin firm's names, read by scripts/brand-terms.ts; never published
+.brand-terms
+
+# Local Supabase stack state
+supabase/.temp/
+supabase/.branches/
