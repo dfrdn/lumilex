@@ -116,7 +116,7 @@ export default function ProfitabilityReport() {
                   <button
                     type="button"
                     onClick={() => toggleExpand(m.matterId)}
-                    className="w-full grid grid-cols-[1fr_90px_90px_90px_90px_60px] gap-2 px-5 py-3 items-center hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors cursor-pointer"
+                    className="w-full grid grid-cols-[1fr_90px_90px_90px_90px_60px] gap-2 px-5 py-3 items-center hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2 text-left">
                       {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />}

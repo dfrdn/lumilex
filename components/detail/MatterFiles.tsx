@@ -157,7 +157,7 @@ export default function MatterFiles({ files, showSourceMatter: showSourceMatterP
         <div className="flex items-center gap-2.5">
           <Paperclip className="w-4 h-4 text-[var(--text-muted)]" />
           <h2 className="text-[15px] font-semibold text-foreground">Files</h2>
-          <span className="font-mono text-[11px] font-medium text-gold-400 bg-gold-50 dark:bg-[rgba(201,168,76,0.12)] rounded-full px-2.5 py-0.5 tabular-nums tracking-wide">
+          <span className="font-mono text-[11px] font-medium text-gold-400 bg-gold-50 dark:bg-[rgba(185, 143, 69,0.12)] rounded-full px-2.5 py-0.5 tabular-nums tracking-wide">
             {files.length + filedCopies.length}
           </span>
         </div>
@@ -293,7 +293,7 @@ export default function MatterFiles({ files, showSourceMatter: showSourceMatterP
                   key={f.id}
                   href={`/dashboard/files/${f.id}`}
                   onClick={(e) => { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); openPane('files', f.id); }}
-                  className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group"
+                  className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground group-hover:text-gold-600 dark:group-hover:text-gold-400 truncate transition-colors duration-150">

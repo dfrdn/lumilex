@@ -129,9 +129,9 @@ export type ButtonVariant = 'primary' | 'outline' | 'subtle' | 'success' | 'dang
 
 export const BTN_TONE: Record<ButtonVariant, string> = {
   primary:
-    'bg-navy-800 text-white hover:bg-navy-700 dark:bg-navy-600 dark:hover:bg-navy-500 shadow-sm focus-visible:ring-navy-400',
+    'bg-navy-900 text-[#F2F0EB] hover:bg-navy-800 dark:bg-[#ECE8E0] dark:text-navy-950 dark:hover:bg-white focus-visible:ring-gold-500',
   outline:
-    'border border-stone-300 dark:border-white/15 bg-white dark:bg-transparent text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-white/5 focus-visible:ring-stone-300 dark:focus-visible:ring-white/30',
+    'border border-navy-900/25 dark:border-white/20 bg-transparent text-navy-900 dark:text-stone-100 hover:border-navy-900/60 hover:bg-navy-900/[0.03] dark:hover:bg-white/5 focus-visible:ring-gold-500',
   subtle:
     'border border-[var(--border-color)] bg-subtle text-[var(--text-secondary)] hover:bg-card-hover focus-visible:ring-stone-300 dark:focus-visible:ring-white/30',
   success: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm focus-visible:ring-emerald-500',
@@ -142,13 +142,13 @@ export const BTN_TONE: Record<ButtonVariant, string> = {
     'text-stone-500 hover:text-rose-600 hover:bg-rose-50 dark:text-stone-400 dark:hover:text-rose-400 dark:hover:bg-rose-500/10 focus-visible:ring-rose-400',
 };
 
-export const BTN_PRIMARY = `${BTN_SHAPE} text-xs rounded-lg ${BTN_TONE.primary}`;
-export const BTN_OUTLINE = `${BTN_SHAPE} text-xs rounded-lg ${BTN_TONE.outline}`;
+export const BTN_PRIMARY = `${BTN_SHAPE} text-xs rounded-full ${BTN_TONE.primary}`;
+export const BTN_OUTLINE = `${BTN_SHAPE} text-xs rounded-full ${BTN_TONE.outline}`;
 export const BTN_GHOST_DANGER =
   'inline-flex items-center justify-center gap-1.5 text-xs font-medium rounded-lg text-stone-500 hover:text-rose-600 hover:bg-rose-50 dark:text-stone-400 dark:hover:text-rose-400 dark:hover:bg-rose-500/10 transition-colors';
 
 /** The card every subject page section sits in. */
-export const CARD = 'rounded-2xl border border-stone-200 dark:border-white/10 bg-white dark:bg-card';
+export const CARD = 'rounded-2xl border border-[var(--border-color)] bg-card shadow-card';
 
 /** The tinted icon tile on a summary card and beside a section's title. */
 export const ACCENT_TILE = {

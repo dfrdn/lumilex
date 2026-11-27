@@ -282,7 +282,7 @@ export default function MatterSections({ tasks, deliverables, hearings, filings,
                 key={d.id}
                 href={`/dashboard/deliverables/${d.id}`}
                 onClick={(e) => { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); openPane('deliverables', d.id); }}
-                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group"
+                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group"
               >
                 <div className="flex-1 min-w-0">
                   {showSourceMatter && d.matter && (
@@ -332,7 +332,7 @@ export default function MatterSections({ tasks, deliverables, hearings, filings,
                 key={t.id}
                 href={`/dashboard/tasks/${t.id}`}
                 onClick={(e) => { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); openPane('tasks', t.id); }}
-                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group"
+                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${
@@ -392,7 +392,7 @@ export default function MatterSections({ tasks, deliverables, hearings, filings,
                 key={h.id}
                 href={`/dashboard/hearings/${h.id}`}
                 onClick={(e) => { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); openPane('hearings', h.id); }}
-                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group"
+                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group"
               >
                 <div className="flex-1 min-w-0">
                   {showSourceMatter && h.matter && (
@@ -435,7 +435,7 @@ export default function MatterSections({ tasks, deliverables, hearings, filings,
                 key={f.id}
                 href={`/dashboard/deliverables/${f.id}`}
                 onClick={(e) => { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); openPane('filings', f.id); }}
-                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group"
+                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group"
               >
                 <div className="flex-1 min-w-0">
                   {showSourceMatter && f.matter && (
@@ -474,7 +474,7 @@ export default function MatterSections({ tasks, deliverables, hearings, filings,
                 key={m.id}
                 href={`/dashboard/meetings/${m.id}`}
                 onClick={(e) => { if (e.metaKey || e.ctrlKey) return; e.preventDefault(); openPane('meetings', m.id); }}
-                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group"
+                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group"
               >
                 <div className="flex-1 min-w-0">
                   {showSourceMatter && m.matter && (

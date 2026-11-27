@@ -310,7 +310,7 @@ export default function WeeklyCalendar({
         {!isCurrentWeek && (
           <button
             onClick={goToThisWeek}
-            className="text-xs text-gold-500 hover:text-gold-400 font-medium px-3 py-1.5 max-sm:min-h-9 rounded-lg hover:bg-gold-50 dark:hover:bg-[rgba(201,168,76,0.08)] border border-gold-200 dark:border-gold-500/20 transition-all duration-150 dark:text-gold-400"
+            className="text-xs text-gold-500 hover:text-gold-400 font-medium px-3 py-1.5 max-sm:min-h-9 rounded-lg hover:bg-gold-50 dark:hover:bg-[rgba(185, 143, 69,0.08)] border border-gold-200 dark:border-gold-500/20 transition-all duration-150 dark:text-gold-400"
           >
             This Week
           </button>
@@ -329,10 +329,10 @@ export default function WeeklyCalendar({
             return (
               <div
                 key={dateStr}
-                className={`min-h-[140px] ${isToday ? 'bg-gold-50/40 dark:bg-[rgba(201,168,76,0.04)]' : 'bg-card'}`}
+                className={`min-h-[140px] ${isToday ? 'bg-gold-50/40 dark:bg-[rgba(185, 143, 69,0.04)]' : 'bg-card'}`}
               >
                 {/* Day header */}
-                <div className={`relative px-2.5 py-2 border-b border-[var(--border-color)] ${isToday ? 'bg-gold-50 dark:bg-[rgba(201,168,76,0.08)]' : 'bg-subtle'}`}>
+                <div className={`relative px-2.5 py-2 border-b border-[var(--border-color)] ${isToday ? 'bg-gold-50 dark:bg-[rgba(185, 143, 69,0.08)]' : 'bg-subtle'}`}>
                   <div className="flex items-center justify-between">
                     <span className={`text-[11px] font-semibold uppercase tracking-[0.08em] ${isToday ? 'text-gold-600 dark:text-gold-400' : 'text-[var(--text-muted)]'}`}>
                       {DAY_NAMES[i]}

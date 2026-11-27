@@ -256,7 +256,7 @@ export default function MatterExhibits({
           <div className="flex items-center gap-2.5">
             <ScrollText className="w-4 h-4 text-[var(--text-muted)]" />
             <h2 className="text-[15px] font-semibold text-foreground">Exhibits</h2>
-            <span className="font-mono text-[11px] font-medium text-gold-400 bg-gold-50 dark:bg-[rgba(201,168,76,0.12)] rounded-full px-2.5 py-0.5 tabular-nums tracking-wide">
+            <span className="font-mono text-[11px] font-medium text-gold-400 bg-gold-50 dark:bg-[rgba(185, 143, 69,0.12)] rounded-full px-2.5 py-0.5 tabular-nums tracking-wide">
               {exhibits.length}
             </span>
           </div>

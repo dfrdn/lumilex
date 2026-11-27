@@ -446,7 +446,7 @@ export default function ReceivablesAging({ role, financeAddress }: Props) {
       : null;
     return (
       <div key={client}>
-        <div className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors">
+        <div className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors">
           <button
             type="button"
             onClick={() => toggleClient(client)}
@@ -640,7 +640,7 @@ export default function ReceivablesAging({ role, financeAddress }: Props) {
             </div>
             {clientInvs.sort((a, b) => b.daysOutstanding - a.daysOutstanding).map((inv) => (
               <div key={inv.id}>
-                <div className="grid grid-cols-[24px_1fr_90px_90px_90px_60px_160px] gap-2 px-5 py-2.5 items-center hover:bg-gold-50/30 dark:hover:bg-[rgba(201,168,76,0.04)] transition-colors">
+                <div className="grid grid-cols-[24px_1fr_90px_90px_90px_60px_160px] gap-2 px-5 py-2.5 items-center hover:bg-gold-50/30 dark:hover:bg-[rgba(185, 143, 69,0.04)] transition-colors">
                   <input
                     type="checkbox"
                     checked={selectedInvoices.has(inv.id)}

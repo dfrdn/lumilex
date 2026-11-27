@@ -162,7 +162,7 @@ export default function DeadlinesSection({ matterId, matterType, canEdit, onAppl
               <div key={chain.id}>
                 {/* Chain header */}
                 <div
-                  className="px-5 py-3 flex items-center gap-3 cursor-pointer hover:bg-gold-50/30 dark:hover:bg-[rgba(201,168,76,0.04)] transition-colors"
+                  className="px-5 py-3 flex items-center gap-3 cursor-pointer hover:bg-gold-50/30 dark:hover:bg-[rgba(185, 143, 69,0.04)] transition-colors"
                   onClick={() => toggleChain(chain.id)}
                 >
                   {isExpanded ? (

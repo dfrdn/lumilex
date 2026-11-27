@@ -443,7 +443,7 @@ export default function DTRReviewDashboard({ currentUserId, mode = 'finance', is
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-foreground font-[family-name:var(--font-playfair)] mb-2">
+      <h1 className="text-2xl font-semibold text-foreground font-serif mb-2">
         Billing Review
       </h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">

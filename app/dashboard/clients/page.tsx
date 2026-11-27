@@ -34,7 +34,7 @@ export default async function ClientsPage() {
           showPortalPreviews ? (
             <Link
               href="/dashboard/clients/portal-previews"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-primary)] hover:text-gold-600 dark:hover:text-gold-400 border border-[var(--border-color)] bg-[var(--card-bg)] hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] rounded-lg px-3 py-2 transition-all"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--text-primary)] hover:text-gold-600 dark:hover:text-gold-400 border border-[var(--border-color)] bg-[var(--card-bg)] hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] rounded-lg px-3 py-2 transition-all"
             >
               <Eye className="w-3.5 h-3.5" />
               Portal previews

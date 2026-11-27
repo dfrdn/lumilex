@@ -82,7 +82,7 @@ export default function LiaisonErrandCostsView({
     <div>
       <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground font-[family-name:var(--font-playfair)] mb-1 flex items-center gap-2">
+          <h1 className="text-2xl font-semibold text-foreground font-serif mb-1 flex items-center gap-2">
             <Bike className="w-5 h-5 text-gold-600" />
             Liaison Errand Costs
           </h1>

@@ -449,7 +449,7 @@ export default async function MatterDetail({ id }: { id: string }) {
               <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">Overview</h2>
             </div>
             <div className="divide-y divide-[var(--border-color)]">
-              <a href="#section-tasks" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors duration-150 cursor-pointer">
+              <a href="#section-tasks" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors duration-150 cursor-pointer">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
                     <CheckSquare className="w-4 h-4 text-blue-500 dark:text-blue-400" />
@@ -463,7 +463,7 @@ export default async function MatterDetail({ id }: { id: string }) {
                 </div>
                 <span className="text-lg font-semibold text-[var(--text-primary)] tabular-nums">{openTasks}</span>
               </a>
-              <a href="#section-deliverables" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors duration-150 cursor-pointer">
+              <a href="#section-deliverables" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors duration-150 cursor-pointer">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center">
                     <FileText className="w-4 h-4 text-violet-500 dark:text-violet-400" />
@@ -472,7 +472,7 @@ export default async function MatterDetail({ id }: { id: string }) {
                 </div>
                 <span className="text-lg font-semibold text-[var(--text-primary)] tabular-nums">{activeDeliverables}</span>
               </a>
-              <a href="#section-hearings" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors duration-150 cursor-pointer">
+              <a href="#section-hearings" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors duration-150 cursor-pointer">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center">
                     <Scale className="w-4 h-4 text-red-500 dark:text-red-400" />
@@ -481,7 +481,7 @@ export default async function MatterDetail({ id }: { id: string }) {
                 </div>
                 <span className="text-lg font-semibold text-[var(--text-primary)] tabular-nums">{upcomingHearings}</span>
               </a>
-              <a href="#section-filings" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors duration-150 cursor-pointer">
+              <a href="#section-filings" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors duration-150 cursor-pointer">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
                     <FolderOpen className="w-4 h-4 text-amber-500 dark:text-amber-400" />
@@ -490,7 +490,7 @@ export default async function MatterDetail({ id }: { id: string }) {
                 </div>
                 <span className="text-lg font-semibold text-[var(--text-primary)] tabular-nums">{upcomingFilings}</span>
               </a>
-              <a href="#section-meetings" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors duration-150 cursor-pointer">
+              <a href="#section-meetings" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors duration-150 cursor-pointer">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-gold-50 dark:bg-gold-400/10 flex items-center justify-center">
                     <Handshake className="w-4 h-4 text-gold-500 dark:text-gold-400" />
@@ -499,7 +499,7 @@ export default async function MatterDetail({ id }: { id: string }) {
                 </div>
                 <span className="text-lg font-semibold text-[var(--text-primary)] tabular-nums">{upcomingMeetings}</span>
               </a>
-              <a href="#section-files" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors duration-150 cursor-pointer">
+              <a href="#section-files" className="px-5 py-4 flex items-center justify-between hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors duration-150 cursor-pointer">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
                     <Paperclip className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
@@ -536,7 +536,7 @@ export default async function MatterDetail({ id }: { id: string }) {
                   {upcomingDeadlines.map((dl, i) => {
                     const overdue = isOverdue(dl.date);
                     return (
-                      <Link key={i} href={dl.href} className="block px-5 py-3.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group">
+                      <Link key={i} href={dl.href} className="block px-5 py-3.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group">
                         <div className="flex items-start gap-2.5">
                           <div className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${
                             overdue ? 'bg-red-500' :
@@ -581,7 +581,7 @@ export default async function MatterDetail({ id }: { id: string }) {
                   <Link
                     key={sm.id}
                     href={`/dashboard/matters/${sm.id}`}
-                    className="flex items-center gap-3 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-all duration-150 group"
+                    className="flex items-center gap-3 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-all duration-150 group"
                   >
                     <div className="w-7 h-7 rounded-lg bg-navy-50/60 dark:bg-navy-500/10 flex items-center justify-center shrink-0">
                       <FolderOpen className="w-3.5 h-3.5 text-navy-400 dark:text-navy-500" />

@@ -314,7 +314,7 @@ export default function MatterExpensesSection({ matterId, canEdit }: { matterId:
               );
             }
             return (
-              <div key={e.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors group">
+              <div key={e.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors group">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="text-xs font-medium text-foreground truncate">{e.description}</p>

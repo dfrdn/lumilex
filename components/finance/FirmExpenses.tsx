@@ -434,7 +434,7 @@ export default function FirmExpenses() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-foreground font-[family-name:var(--font-playfair)]">
+        <h1 className="text-2xl font-semibold text-foreground font-serif">
           Matter Expenses
         </h1>
         <button

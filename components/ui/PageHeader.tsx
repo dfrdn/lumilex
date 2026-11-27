@@ -10,7 +10,7 @@ export default function PageHeader({ icon, title, subtitle, action }: Props) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="font-serif text-[1.75rem] leading-tight tracking-tight text-stone-900 dark:text-stone-50 flex items-center gap-2.5">
+        <h1 className="font-serif text-[2.25rem] leading-[1.05] text-stone-900 dark:text-stone-50 flex items-center gap-2.5">
           <span className="text-stone-400 dark:text-stone-500 shrink-0">{icon}</span>
           {title}
         </h1>

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, DM_Sans, JetBrains_Mono } from 'next/font/google';
+import { Instrument_Serif, Geist, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import SessionProvider from '@/components/SessionProvider';
 import ThemeProvider from '@/components/ThemeProvider';
@@ -12,21 +12,26 @@ import { isDemoDeployment } from '@/lib/demo/guard';
 import { resolveRequestDemo } from '@/lib/demo/request';
 import DemoBanner from '@/components/DemoBanner';
 
-const playfair = Playfair_Display({
+// The faces of lumilex.co: the serif for headlines, Geist for everything a
+// person reads or works in, and the mono for dockets and reference numbers.
+const instrument = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-playfair',
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-instrument',
   display: 'swap',
 });
 
-const dmSans = DM_Sans({
+const geist = Geist({
   subsets: ['latin'],
-  variable: '--font-dm-sans',
+  variable: '--font-geist',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const plexMono = IBM_Plex_Mono({
   subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
+  weight: ['400', '500'],
+  variable: '--font-plex-mono',
   display: 'swap',
 });
 
@@ -67,7 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   ]);
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${playfair.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body className={`${instrument.variable} ${geist.variable} ${plexMono.variable} font-sans antialiased`}>
         <ThemeProvider>
           <BrandProvider brand={brand}>
             <SessionProvider initialSession={session}>{children}</SessionProvider>

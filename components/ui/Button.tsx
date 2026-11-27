@@ -4,9 +4,9 @@ import { BTN_SHAPE, BTN_TONE, type ButtonVariant } from './tone';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const SIZE: Record<ButtonSize, string> = {
-  sm: 'text-xs px-2.5 py-1 rounded-lg',
-  md: 'text-xs px-3 py-1.5 rounded-lg',
-  lg: 'text-sm px-4 py-2 rounded-xl',
+  sm: 'text-xs px-3 py-1 rounded-full',
+  md: 'text-xs px-3.5 py-1.5 rounded-full',
+  lg: 'text-sm px-5 py-2 rounded-full',
 };
 
 /** The class string for a kit button, for the rare element that can't be a `Button`. */

@@ -651,7 +651,7 @@ function PersonCard({
                 type="button"
                 onClick={() => setEditing(editingRole?.id === r.id ? null : { kind: 'role', roleId: r.id })}
                 className={`press px-2 py-0.5 rounded-md ring-1 ring-inset text-[11px] font-medium transition-shadow ${ROLE_TONE[r.role]} ${
-                  editingRole?.id === r.id ? 'shadow-[0_0_0_2px_rgba(201,168,76,0.35)]' : 'hover:shadow-sm'
+                  editingRole?.id === r.id ? 'shadow-[0_0_0_2px_rgba(185, 143, 69,0.35)]' : 'hover:shadow-sm'
                 }`}
                 title="Edit this role"
               >

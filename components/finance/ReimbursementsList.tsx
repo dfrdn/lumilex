@@ -109,7 +109,7 @@ export default function ReimbursementsList() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-foreground font-[family-name:var(--font-playfair)] mb-6">
+      <h1 className="text-2xl font-semibold text-foreground font-serif mb-6">
         Reimbursements
       </h1>
 

@@ -127,7 +127,7 @@ export default function CashFlowDashboard() {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground font-[family-name:var(--font-playfair)] flex items-center gap-2">
+          <h1 className="text-2xl font-semibold text-foreground font-serif flex items-center gap-2">
             <Activity className="w-5 h-5 text-[var(--text-muted)]" />
             Cash Flow
           </h1>

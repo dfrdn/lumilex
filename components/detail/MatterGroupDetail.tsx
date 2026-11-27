@@ -163,7 +163,7 @@ export default async function MatterGroupDetail({
                 const root = lineRoots.get(member.id);
                 const chain = root ? chainIndex.get(root) : undefined;
                 return (
-                  <li key={member.id} className="px-6 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] transition-colors">
+                  <li key={member.id} className="px-6 py-3 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] transition-colors">
                     <Link href={`/dashboard/matters/${member.id}`} className="flex items-center gap-2.5 group">
                       {depth > 0 && (
                         <span className="flex items-center" style={{ marginLeft: `${(depth - 1) * 16}px` }}>

@@ -62,7 +62,7 @@ export default function ItemRow({ href, title, subtitle, badge, meta, right, lea
     </>
   );
 
-  const cls = "relative flex items-start justify-between max-sm:flex-wrap py-2.5 px-2.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] rounded-lg transition-all duration-150 group hover:translate-x-0.5";
+  const cls = "relative flex items-start justify-between max-sm:flex-wrap py-2.5 px-2.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] rounded-lg transition-all duration-150 group hover:translate-x-0.5";
 
   // When openPane is provided, render a clickable div so nested action buttons
   // stay valid HTML. role="button" + keyboard handlers preserve accessibility.

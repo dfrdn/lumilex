@@ -279,7 +279,7 @@ export default function CaseTimeline({
               </svg>
             </span>
             <h2 className="text-[15px] font-semibold text-foreground">Case Timeline</h2>
-            <span className="font-mono text-[11px] font-medium text-gold-400 bg-gold-50 dark:bg-[rgba(201,168,76,0.12)] rounded-full px-2.5 py-0.5 tabular-nums tracking-wide">
+            <span className="font-mono text-[11px] font-medium text-gold-400 bg-gold-50 dark:bg-[rgba(185, 143, 69,0.12)] rounded-full px-2.5 py-0.5 tabular-nums tracking-wide">
               {allEvents.length}
             </span>
           </div>

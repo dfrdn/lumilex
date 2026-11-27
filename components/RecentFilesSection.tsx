@@ -506,7 +506,7 @@ export default function RecentFilesSection({ newFiles: initialNew, readFiles: in
       className="group group/inbox animate-fade-up"
       style={{ animationDelay: `${Math.min(i * 30, 300)}ms` }}
     >
-      <div className="relative flex items-start justify-between max-sm:flex-wrap py-2.5 px-2.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(201,168,76,0.06)] rounded-lg transition-all duration-150 hover:translate-x-0.5">
+      <div className="relative flex items-start justify-between max-sm:flex-wrap py-2.5 px-2.5 hover:bg-gold-50/40 dark:hover:bg-[rgba(185, 143, 69,0.06)] rounded-lg transition-all duration-150 hover:translate-x-0.5">
         {/* Left: title + subtitle */}
         <div className="flex-1 min-w-0 max-sm:basis-full">
           <button
