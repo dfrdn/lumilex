@@ -16,8 +16,9 @@ export function sourceLabel(source: RuleSource): string {
   return SOURCE_META[source].short;
 }
 
-export function ruleSlug(source: RuleSource, rule: number): string {
-  return `rules-of-court-${source}-rule-${rule}`;
+/** The Library page that carries a whole book of the Rules: "rules-of-court-civil". */
+export function rulesPartSlug(source: RuleSource): string {
+  return `rules-of-court-${source}`;
 }
 
 export function rulePageTitle(rule: number, ruleTitle: string): string {
@@ -28,17 +29,14 @@ export function citationOf(rule: number, section: number): string {
   return `Rule ${rule}, Section ${section}`;
 }
 
-/** Heading id the Library article assigns: the same slug rule as its table of contents. */
-export function headingSlug(text: string): string {
-  return text.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').substring(0, 60);
+/** Element id of a rule on its book's page. */
+export function ruleAnchor(rule: number): string {
+  return `rule-${rule}`;
 }
 
-export function sectionHeading(section: number, title: string): string {
-  return `Section ${section}. ${title}`;
-}
-
-export function sectionAnchor(section: number, title: string): string {
-  return headingSlug(sectionHeading(section, title));
+/** Element id of a section on its book's page: section numbers repeat across rules, so the rule is part of it. */
+export function ruleSectionAnchor(rule: number, section: number): string {
+  return `rule-${rule}-sec-${section}`;
 }
 
 /** Where a section lives in the app, resolvable without a lookup. */

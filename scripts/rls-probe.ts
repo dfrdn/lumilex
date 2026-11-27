@@ -103,6 +103,7 @@ const provisionedFirmIds: string[] = [];
 // matter summaries/health).
 const FIXTURE_TABLES = [
   'portal_chat_messages', 'chat_messages', 'chat_channels', 'matter_summaries', 'matter_exec_summaries', 'matter_health',
+  'code_provision_reviews', 'code_provision_versions', 'code_provisions', 'legal_codes',
   'court_rule_sections', 'file_analyses', 'files', 'audit_log', 'tasks', 'content_revisions', 'kb_pages',
   // Billing: matter_expenses points at invoices with no ON DELETE, so it goes
   // first; everything here is either a fixture or something the invoice
@@ -762,6 +763,103 @@ async function keywordSearchProbe(Al: SupabaseClient) {
     { p_firm_id: fx.A.firmId, p_query: phrase });
 }
 
+/**
+ * The codes (20261125_legal_codes.sql). The text is the same in every firm,
+ * but the rows are per firm: each code points at its page in one firm's
+ * Library, and a review is one firm's sign-off. Staff read their own firm's
+ * provisions and history; only the importer writes them; a reviewer records a
+ * review as themself, in their own firm, on their own firm's provision.
+ * search_code_provisions must stay in its firm, and no API role runs it.
+ */
+async function legalCodesProbe(Ap: SupabaseClient, Al: SupabaseClient, Bl: SupabaseClient, Aportal: SupabaseClient) {
+  console.log('── legal codes (legal_codes, code_provisions, versions, reviews) ──');
+  const phrase = 'probe quintessential stevedore';
+  const provision: Record<'A' | 'B', number> = { A: 0, B: 0 };
+  for (const which of ['A', 'B'] as const) {
+    const firmId = fx[which].firmId;
+    await insertOrThrow('legal_codes', {
+      firm_id: firmId, id: 'probe', title: 'Probe Code', short_title: 'Probe Code', instrument: 'Probe Act', unit: 'article',
+    });
+    const { data, error } = await service.from('code_provisions').insert({
+      firm_id: firmId, code_id: 'probe', number: '1', position: 0, heading: 'Probe article',
+      text: `The ${phrase} shall be paid.`, citation: 'Probe Code, art. 1',
+    }).select('id').single();
+    if (error) throw new Error(`code_provisions insert failed: ${error.message}`);
+    provision[which] = data.id as number;
+    await insertOrThrow('code_provision_versions', {
+      firm_id: firmId, provision_id: provision[which], seq: 0, change: 'original', text: `The ${phrase} shall be paid.`,
+    });
+  }
+
+  // The composite foreign keys: a firm-A row cannot hang off firm B's code or provision.
+  const { error: crossCode } = await service.from('code_provisions').insert({
+    firm_id: fx.A.firmId, code_id: 'probe-b-only', number: '1', position: 0, text: 'x', citation: 'x',
+  });
+  record('a provision cannot name a code its firm does not hold', crossCode?.code === '23503',
+    crossCode ? `${crossCode.code}: ${crossCode.message}` : 'insert succeeded');
+  const { error: crossVersion } = await service.from('code_provision_versions').insert({
+    firm_id: fx.A.firmId, provision_id: provision.B, seq: 9, change: 'amended',
+  });
+  record("a firm-A version cannot hang off firm B's provision", crossVersion?.code === '23503',
+    crossVersion ? `${crossVersion.code}: ${crossVersion.message}` : 'insert succeeded');
+
+  const A = String(provision.A);
+  const B = String(provision.B);
+  await expectRows('A-lawyer reads own-firm code', Al, 'legal_codes', { id: 'probe', firm_id: fx.A.firmId }, 1);
+  await expectRows('A-lawyer cannot read firm-B code', Al, 'legal_codes', { firm_id: fx.B.firmId }, 0);
+  await expectRows('A-lawyer reads own-firm provision', Al, 'code_provisions', { id: A }, 1);
+  await expectRows('A-lawyer cannot read firm-B provision', Al, 'code_provisions', { id: B }, 0);
+  await expectRows("A-lawyer reads own-firm provision's history", Al, 'code_provision_versions', { provision_id: A }, 1);
+  await expectRows("A-lawyer cannot read firm-B provision's history", Al, 'code_provision_versions', { provision_id: B }, 0);
+  await expectRows('A-portal reads no provision', Aportal, 'code_provisions', { id: A }, 0);
+  await expectWriteDenied('A-partner cannot rewrite a provision', Ap, 'code_provisions', { text: 'rewritten' }, { id: A });
+  await expectWriteDenied('A-partner cannot rewrite a version', Ap, 'code_provision_versions', { text: 'rewritten' }, { provision_id: A });
+  const { error: lawyerAdds } = await Al.from('code_provisions').insert({
+    firm_id: fx.A.firmId, code_id: 'probe', number: '2', position: 1, text: 'x', citation: 'x',
+  });
+  record('A-lawyer cannot add a provision', lawyerAdds?.code === '42501',
+    lawyerAdds ? `${lawyerAdds.code}: ${lawyerAdds.message}` : 'insert succeeded');
+
+  // Reviews: a reviewer as themself, in their own firm. The partner's own
+  // review is the control — without it, every refusal below proves nothing.
+  const review = (which: 'A' | 'B', extra: Record<string, unknown> = {}) => ({
+    firm_id: fx.A.firmId, provision_id: provision[which], version_seq: 0, reviewed_by: fx.A.personIds['A-partner'], ...extra,
+  });
+  const { error: ownReview } = await Ap.from('code_provision_reviews').insert(review('A'));
+  record('A-partner records their own review of an own-firm provision', !ownReview,
+    ownReview ? `${ownReview.code}: ${ownReview.message}` : 'inserted');
+  await expectRows('A-lawyer reads own-firm reviews', Al, 'code_provision_reviews', { provision_id: A }, 1);
+  await expectRows('B-lawyer cannot read firm-A reviews', Bl, 'code_provision_reviews', { provision_id: A }, 0);
+  const { error: lawyerReview } = await Al.from('code_provision_reviews').insert(review('A', { reviewed_by: fx.A.personIds['A-lawyer'] }));
+  record('A-lawyer cannot record a review', lawyerReview?.code === '42501',
+    lawyerReview ? `${lawyerReview.code}: ${lawyerReview.message}` : 'insert succeeded');
+  const { error: asOther } = await Ap.from('code_provision_reviews').insert(review('A', { reviewed_by: fx.A.personIds['A-lawyer'] }));
+  record('A-partner cannot record a review in another person\'s name', asOther?.code === '42501',
+    asOther ? `${asOther.code}: ${asOther.message}` : 'insert succeeded');
+  const { error: onB } = await Ap.from('code_provision_reviews').insert(review('B'));
+  record("A-partner cannot review firm B's provision", !!onB, onB ? `${onB.code}: ${onB.message}` : 'insert succeeded');
+  await expectInsertNotCrossFirm('A-partner cannot file a review under firm B', Ap, 'code_provision_reviews',
+    review('B', { firm_id: fx.B.firmId, note: 'probe-cross-firm-review' }), 'note', fx.B.firmId);
+  await expectWriteDenied('A-partner cannot edit a review', Ap, 'code_provision_reviews', { note: 'rewritten' }, { provision_id: A });
+  await Ap.from('code_provision_reviews').delete().eq('provision_id', A);
+  const { count: reviewsLeft } = await service.from('code_provision_reviews').select('id', { count: 'exact', head: true }).eq('provision_id', provision.A);
+  record('A-partner cannot delete a review', reviewsLeft === 1, `reviews left: ${reviewsLeft ?? 0}`);
+
+  for (const which of ['A', 'B'] as const) {
+    const other = which === 'A' ? 'B' : 'A';
+    const { data, error } = await service.rpc('search_code_provisions', { p_firm_id: fx[which].firmId, p_query: phrase, p_limit: 10 });
+    const found = ((data ?? []) as { id: number }[]).map((r) => r.id);
+    record(`codes search for firm ${which} finds its own provision and not firm ${other}'s`,
+      !error && found.includes(provision[which]) && !found.includes(provision[other]),
+      error ? `rpc error: ${error.message}` : `returned ${JSON.stringify(found)}`);
+  }
+  await expectRpcDenied('A-lawyer cannot call search_code_provisions', Al, 'search_code_provisions',
+    { p_firm_id: fx.A.firmId, p_query: phrase });
+  const anon = createClient(URL, ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+  await expectRpcDenied('anon cannot call search_code_provisions', anon, 'search_code_provisions',
+    { p_firm_id: fx.A.firmId, p_query: phrase });
+}
+
 async function invoiceProbe(financeA: SupabaseClient, financeB: SupabaseClient) {
   console.log('── invoice generation (finance handlers\' pipeline, authed client) ──');
 
@@ -1188,6 +1286,7 @@ async function main() {
   await viewProbe(Ap, Al, Bl, Aportal, Bportal);
   await libraryProbe(Ap, Al, Bl);
   await keywordSearchProbe(Al);
+  await legalCodesProbe(Ap, Al, Bl, Aportal);
 
   console.log('── anon ──');
   const anon = createClient(URL, ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });

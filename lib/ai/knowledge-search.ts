@@ -18,7 +18,8 @@ import { getServiceDbForFirm } from '@/lib/tenancy/service-db';
 import { filterVisible, resolveAccessScope } from '@/lib/ai/knowledge-access';
 import { isKeywordEligible, mergeExactFirst, stripHeadlineMarkers } from '@/lib/ai/knowledge-merge';
 import { normalizeDocumentType } from '@/lib/document-type';
-import { sourceLabel } from '@/lib/rules/model';
+import { ruleSectionAnchor, sourceLabel } from '@/lib/rules/model';
+import { provisionAnchor, type CodeUnit } from '@/lib/codes/model';
 import type { RuleSource } from '@/lib/rules/parse-rules-of-court';
 
 // ── Types ────────────────────────────────────────────────────────────
@@ -26,7 +27,7 @@ import type { RuleSource } from '@/lib/rules/parse-rules-of-court';
 export type KnowledgeCategory =
   | 'Exact matches'
   | 'Library'
-  | 'Rules of Court'
+  | 'Codes & Rules'
   | 'Pleadings'
   | 'Memos'
   | 'Matter Briefs'
@@ -40,7 +41,7 @@ export type KnowledgeCategory =
 export const CATEGORY_ORDER: KnowledgeCategory[] = [
   'Exact matches',
   'Library',
-  'Rules of Court',
+  'Codes & Rules',
   'Matter Briefs',
   'Pleadings',
   'Memos',
@@ -116,6 +117,8 @@ export function formatSourceLabel(
       return `Library: ${name}`;
     case 'court_rule':
       return `Rules of Court: ${name}`;
+    case 'code_provision':
+      return name;
     default:
       return name;
   }
@@ -150,7 +153,8 @@ export function formatSourceUrl(
       return `/dashboard/meetings/${id}`;
     case 'kb_page':
     case 'court_rule':
-      // A section's entityId carries its page and "?section=N" (see the lookup).
+    case 'code_provision':
+      // A provision's entityId carries its page and "#anchor" (see the lookup).
       return `/dashboard/library/${id}`;
     case 'email_attachment':
       // entityId is the linked matter — emails render on the matter detail page.
@@ -193,7 +197,8 @@ function deriveCategory(
     case 'kb_page':
       return 'Library';
     case 'court_rule':
-      return 'Rules of Court';
+    case 'code_provision':
+      return 'Codes & Rules';
     case 'file_analysis':
     case 'file':
     case 'email_attachment':
@@ -593,12 +598,28 @@ async function batchEnrich(
         case 'court_rule': {
           const { data } = await supabase
             .from('court_rule_sections')
-            .select('id, source, section, citation, title, kb_page_id')
+            .select('id, source, rule, section, citation, title, kb_page_id')
             .in('id', ids.map((s) => Number(s)).filter((n) => !Number.isNaN(n)));
           for (const r of data ?? []) {
             lookup.set(`${sourceType}::${r.id}`, {
-              entityId: r.kb_page_id ? `${r.kb_page_id}?section=${r.section}` : null,
+              entityId: r.kb_page_id ? `${r.kb_page_id}#${ruleSectionAnchor(r.rule, r.section)}` : null,
               displayName: `${r.citation} — ${r.title} (${sourceLabel(r.source as RuleSource)})`,
+              matterName: null,
+              matterId: null,
+              deliverableType: null,
+            });
+          }
+          break;
+        }
+        case 'code_provision': {
+          const { data } = await supabase
+            .from('code_provisions')
+            .select('id, number, citation, heading, legal_codes!inner(unit, kb_page_id)')
+            .in('id', ids.map((s) => Number(s)).filter((n) => !Number.isNaN(n)));
+          for (const r of (data ?? []) as unknown as { id: number; number: string; citation: string; heading: string | null; legal_codes: { unit: CodeUnit; kb_page_id: number | null } }[]) {
+            lookup.set(`${sourceType}::${r.id}`, {
+              entityId: r.legal_codes.kb_page_id ? `${r.legal_codes.kb_page_id}#${provisionAnchor(r.legal_codes.unit, r.number)}` : null,
+              displayName: r.heading ? `${r.citation} — ${r.heading}` : r.citation,
               matterName: null,
               matterId: null,
               deliverableType: null,
@@ -650,9 +671,10 @@ async function keywordMatches(query: string, limit: number, firmId: string): Pro
   // delimiters itself.
   const orLike = like.replace(/[,()"]/g, ' ');
 
-  const [text, rules, files, deliverables, matters] = await Promise.all([
+  const [text, rules, codes, files, deliverables, matters] = await Promise.all([
     supabase.rpc('search_document_text', { p_firm_id: firmId, p_query: query, p_limit: limit }),
     supabase.rpc('search_court_rules', { p_firm_id: firmId, p_query: query, p_limit: 5 }),
+    supabase.rpc('search_code_provisions', { p_firm_id: firmId, p_query: query, p_limit: 5 }),
     supabase.from('files').select('notion_id, name, matter_id').ilike('name', like).limit(8),
     supabase.from('deliverables').select('notion_id, name, matter_id').ilike('name', like).limit(8),
     supabase
@@ -680,6 +702,9 @@ async function keywordMatches(query: string, limit: number, firmId: string): Pro
   }
   for (const r of ((rules.data ?? []) as { id: number; citation: string; title: string; headline: string | null }[])) {
     out.push(synth('court_rule', String(r.id), null, stripHeadlineMarkers(r.headline ?? `${r.citation}. ${r.title}`)));
+  }
+  for (const r of ((codes.data ?? []) as { id: number; citation: string; heading: string | null; headline: string | null }[])) {
+    out.push(synth('code_provision', String(r.id), null, stripHeadlineMarkers(r.headline ?? `${r.citation}. ${r.heading ?? ''}`)));
   }
   for (const d of (deliverables.data ?? [])) out.push(synth('deliverable', d.notion_id, d.matter_id, d.name ?? ''));
   for (const f of (files.data ?? [])) out.push(synth('file', f.notion_id, f.matter_id, f.name ?? ''));

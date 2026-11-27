@@ -79,7 +79,7 @@ export const ALLOWED_TOKENS: Readonly<Record<string, readonly string[]>> = {
     'Busy', 'Attn', 'Re', 'flex', 'for', 'in', 'sc', 'auto', 'band', 'gap', 'mode',
     'soon', 'one', 'grey', 'lg', 'div', 'li', 'href', 'blue', 'sky', 'teal', 'late', 'Fees', 'xl',
     'body', 'by', 'kind', 'owed', 'rich', 'end', 'fees', 'key', 'main', 'side', 'away', 'Home', 'End',
-    'from', 'to', 'pins', 'cell',
+    'from', 'to', 'pins', 'cell', 'same', 'diff', 'not',
   ],
   // Philippine agencies and legal/corporate terms of art. Same shape as
   // initials, which is exactly why they must be named rather than guessed at.
@@ -94,12 +94,15 @@ export const ALLOWED_TOKENS: Readonly<Record<string, readonly string[]>> = {
   // Philippine court levels (Court of Appeals, Court of Tax Appeals, Regional
   // and Municipal Trial Courts) and a motion for reconsideration.
   courts: ['ca', 'cta', 'rtc', 'mtc', 'mr'],
+  // How a code is laid out: its divisions (a Book of the Labor Code) and a
+  // footnote of the official edition, as the parser classifies its lines.
+  statute_layout: ['Book', 'book', 'fn'],
   // File formats, protocols, HTTP verbs, and the zip signature a .docx starts with.
   formats: ['csv', 'docx', 'html', 'jpg', 'json', 'md', 'pdf', 'png', 'POST', 'PUT', 'xlsx', 'PK'],
   // Field names in a model tool schema: the affidavit review's question number.
   schema_fields: ['q_no'],
   // Units, technical abbreviations, and generated time-slot keys (T00…T24).
-  technical: ['ai', 'asc', 'cap', 'db', 'dl', 'dtr', 'eq', 'fyi', 'gte', 'lte', 'opex', 'sm', 'T00', 'T24', 'TTL', 'ytd'],
+  technical: ['ai', 'asc', 'cap', 'db', 'dl', 'dtr', 'eq', 'fyi', 'gte', 'lte', 'opex', 'seq', 'sm', 'T00', 'T24', 'TTL', 'ytd'],
 };
 
 const ALLOWED = new Set(Object.values(ALLOWED_TOKENS).flat());

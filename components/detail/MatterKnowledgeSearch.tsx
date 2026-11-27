@@ -23,7 +23,7 @@ interface SearchResponse {
 const CATEGORY_ICON: Record<KnowledgeCategory, typeof Scale> = {
   'Exact matches': Quote,
   'Library': Library,
-  'Rules of Court': BookMarked,
+  'Codes & Rules': BookMarked,
   'Matter Briefs':  Scale,
   'Pleadings':      ScrollText,
   'Memos':          FileText,

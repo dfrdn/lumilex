@@ -250,11 +250,37 @@ its API grants revoked — drop it once nothing has needed it for a while.
 - **Distilled pages follow the firm's `ai_search` switch**
   ([lib/library/scope.ts](lib/library/scope.ts)) — they are AI output, as the
   old Knowledge Base page was. The handbook and the Rules of Court do not.
-- **The Rules of Court are per firm** (`court_rule_sections`, a tenant table):
-  the text is public, but each section points at its rule's page in one firm's
-  Library. `scripts/import-rules-of-court.ts <firm>` loads them, idempotently;
-  provisioning does not, so a new firm needs it run once. They are read-only
-  for every role — a rule changes by re-import, never by hand.
+- **The Rules of Court and the codes are per firm** (`court_rule_sections`;
+  `legal_codes`, `code_provisions`, `code_provision_versions`,
+  `code_provision_reviews` — all tenant tables): the text is public, but each
+  section or code points at its page in one firm's Library, and a review is
+  one firm's sign-off. The code tables' children reach their parent through a
+  composite `(firm_id, …)` foreign key, so a row cannot hang off another
+  firm's code or provision. `scripts/import-rules-of-court.ts <firm>` and
+  `scripts/import-legal-codes.ts <firm>` load them, idempotently;
+  provisioning does not, so a new firm needs both run once. They are
+  read-only for every role — the law changes by re-import, never by hand.
+- **The law is read whole, one Library page per code or per book of the
+  Rules** (`kb_pages.kind` `legal_code` / `rules_of_court`). The page's
+  `content_md` is only a preface; the Library renders the text from the
+  provision rows through `loadStatute` ([lib/library/statute.ts](lib/library/statute.ts))
+  and [StatuteReader](components/library/StatuteReader.tsx). Link to a
+  provision with `provisionHref(code, number)` or the Rules' `sectionHref`
+  ([lib/codes/model.ts](lib/codes/model.ts), [lib/rules/model.ts](lib/rules/model.ts));
+  both redirect to the page at the provision's anchor.
+- **Every provision keeps its history** in `code_provision_versions`
+  (original, then each amendment, insertion, renumbering or repeal, with the
+  law and section that made it). An earlier version's text may be unknown,
+  and is null then — never fill it from memory. `code_provision_reviews` is
+  the append-only record that a reviewer (partner, admin, super_user) checked
+  a version against its source; `POST /api/codes/provisions/[id]/review`
+  checks the role before RLS does.
+- **Code text comes from the signed copy or an official consolidated
+  edition, never from lawphil's HTML alone** (the RCC there has dozens of
+  typos and dropped lines against the signed law). `data/codes/<code>.json`
+  is the parsed result and is committed; `scripts/parse-legal-code.ts` makes
+  it, and a re-parse is checked word for word against the committed file
+  before it is imported.
 
 **Search runs a keyword pass beside the semantic one**
 ([lib/ai/knowledge-search.ts](lib/ai/knowledge-search.ts)): full text over
@@ -541,10 +567,11 @@ Onboarding is **operator-run** — no public signup, no billing. `scripts/provis
 - **`firm_invoice_settings` is written deliberately incomplete**: a real `invoice_prefix` (`allocate_invoice_number` needs it) and `invoicePlaceholder(...)` values for everything that says where money goes. `getFirmInvoiceSettings` throws on a blank *or* placeholder required field, naming them — so invoicing, `regenerate-invoice`, the proposal's payment block and the branded DOCX letterhead all stop until finance completes it. `missingInvoiceSettings()` is the pure rule; don't re-derive it at a call site.
 - **Every `firm_integrations` row is written disabled.** The entitlement half (`firms.settings.features`) comes from the config; the switch is the operator's, after credentials.
 
-- **The Rules of Court are a separate step.** `provisionFirm()` does not load
-  them — 943 sections and 95 Library pages are not seed content, and the
-  import embeds them when the firm has `ai_search`. Run
-  `npx tsx scripts/import-rules-of-court.ts <firm>` once the firm exists; it is
+- **The Rules of Court and the codes are a separate step.** `provisionFirm()`
+  does not load them — 943 sections and 505 articles and sections are not
+  seed content, and the imports embed them when the firm has `ai_search`. Run
+  `npx tsx scripts/import-rules-of-court.ts <firm>` and
+  `npx tsx scripts/import-legal-codes.ts <firm>` once the firm exists; both are
   idempotent, so re-running after a data update changes only what changed.
 
 ### The seed pack ([lib/provisioning/seed-pack/](lib/provisioning/seed-pack/))

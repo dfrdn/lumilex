@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayCountsIn, headingSlug, parseRuleCitations, sectionAnchor, sourceOfRule, titleCase } from './model';
+import { dayCountsIn, parseRuleCitations, ruleSectionAnchor, rulesPartSlug, sectionHref, sourceOfRule, titleCase } from './model';
 
 describe('sourceOfRule', () => {
   it('maps rule numbers to the three publications and nothing else', () => {
@@ -42,8 +42,9 @@ describe('titleCase and anchors', () => {
     expect(titleCase('MOTION FOR RECONSIDERATION')).toBe('Motion for Reconsideration');
     expect(titleCase('PRE-TRIAL')).toBe('Pre-Trial');
   });
-  it('builds the same heading id the article assigns', () => {
-    expect(headingSlug('Section 34. Offer of evidence')).toBe('section-34-offer-of-evidence');
-    expect(sectionAnchor(5, 'Litigious motions')).toBe('section-5-litigious-motions');
+  it('anchors a section by its rule, since section numbers repeat across a book', () => {
+    expect(ruleSectionAnchor(15, 5)).toBe('rule-15-sec-5');
+    expect(rulesPartSlug('evidence')).toBe('rules-of-court-evidence');
+    expect(sectionHref('civil', 41, 3)).toBe('/dashboard/library/rules/civil/41?section=3');
   });
 });

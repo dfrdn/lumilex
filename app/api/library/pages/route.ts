@@ -8,7 +8,7 @@ import { reembedLibraryPage } from '@/lib/library/embed';
 import { libraryPageCreateSchema } from '@/lib/library/schemas';
 import { showsDistilled } from '@/lib/library/scope';
 import {
-  HANDBOOK_KINDS, RULES_KIND, canAuthorHandbook, isReviewer, slugify, type LibraryPageSummary,
+  HANDBOOK_KINDS, SECTION_KINDS, canAuthorHandbook, isReviewer, slugify, type LibraryPageSummary,
 } from '@/lib/library/model';
 
 const LIST_COLUMNS =
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     .limit(500);
 
   if (!(await showsDistilled(session.firmId))) {
-    query = query.in('kind', [...HANDBOOK_KINDS, RULES_KIND]);
+    query = query.in('kind', [...HANDBOOK_KINDS, ...SECTION_KINDS.rules]);
   }
   if (!isReviewer(role)) {
     query = canAuthorHandbook(role)

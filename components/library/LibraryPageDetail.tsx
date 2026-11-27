@@ -7,12 +7,13 @@ import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
 import {
   ArrowLeft, Check, CircleCheck, Clock, FileText, Link2, List as ListIcon, Loader2, Pencil, Pin, Quote, Save,
-  Sparkles, Trash2, User, X, ArrowRight,
+  Sparkles, Trash2, User, X,
 } from 'lucide-react';
 import ChatMarkdown from '@/components/ChatMarkdown';
-import type { RulesPageMeta } from '@/lib/library/load';
+import type { StatuteDoc } from '@/lib/library/statute';
+import StatuteReader from './StatuteReader';
 import {
-  canDeleteKind, canEditKind, canPublishKind, isHandbookKind, kindLabel, publishBlockedReason, sectionOf,
+  canDeleteKind, canEditKind, canPublishKind, isHandbookKind, isReviewer, kindLabel, publishBlockedReason, sectionOf, SECTION_LABELS,
   stripCitationTags, STATUS_LABELS,
   type LibraryCitation, type LibraryContributor, type LibraryPageFull,
 } from '@/lib/library/model';
@@ -24,15 +25,13 @@ interface Props {
   page: LibraryPageFull;
   citations: LibraryCitation[];
   contributors: LibraryContributor[];
-  /** Set for a Rules of Court page: its book, neighbours, and section anchors. */
-  rules?: RulesPageMeta | null;
-  /** A section number to open the page at (?section=N). */
-  initialSection?: number | null;
+  /** Set for a code or a book of the Rules: the page reads whole from its provisions. */
+  statute?: StatuteDoc | null;
   role: string;
   currentUserId: string;
 }
 
-export default function LibraryPageDetail({ page: initial, citations, contributors, rules = null, initialSection = null, role }: Props) {
+export default function LibraryPageDetail({ page: initial, citations, contributors, statute = null, role }: Props) {
   const router = useRouter();
   const [page, setPage] = useState(initial);
   const [editing, setEditing] = useState(false);
@@ -42,11 +41,9 @@ export default function LibraryPageDetail({ page: initial, citations, contributo
   const [draftContent, setDraftContent] = useState(initial.content_md ?? '');
 
   const handbook = isHandbookKind(page.kind);
-  const isRules = !!rules;
-  // Rules pages read like handbook pages: one article, no citation rail.
-  const plain = handbook || isRules;
+  const isStatute = !!statute;
+  const plain = handbook;
   const html = page.content_format === 'html';
-  const initialAnchor = isRules && initialSection != null ? rules.sections.find((x) => x.section === initialSection)?.anchor ?? null : null;
   const mayEdit = canEditKind(role, page.kind);
   const mayPublish = canPublishKind(role, page.kind);
   const mayDelete = canDeleteKind(role, page.kind);
@@ -108,10 +105,9 @@ export default function LibraryPageDetail({ page: initial, citations, contributo
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Back + actions */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <Link href={isRules ? '/dashboard/library?section=rules' : '/dashboard/library'} className="inline-flex items-center gap-1.5 text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> {isRules ? 'Rules of Court' : 'Library'}
+        <Link href={isStatute ? '/dashboard/library?section=rules' : '/dashboard/library'} className="inline-flex items-center gap-1.5 text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 transition-colors">
+          <ArrowLeft className="w-4 h-4" /> {isStatute ? SECTION_LABELS.rules : 'Library'}
         </Link>
-        {rules && <RuleNav rules={rules} />}
         {(mayEdit || mayPublish || mayDelete) && !editing && (
           <div className="flex items-center gap-2 flex-wrap">
             {mayEdit && (
@@ -206,25 +202,23 @@ export default function LibraryPageDetail({ page: initial, citations, contributo
                     ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300'
                     : 'bg-violet-50 text-violet-700 dark:bg-violet-400/10 dark:text-violet-300'
               }`}>
-                {isRules ? rules.sourceLabel : kindLabel(page.kind)}
+                {kindLabel(page.kind)}
               </span>
-              {!isRules && <StatusBadge status={page.status} />}
+              {!isStatute && <StatusBadge status={page.status} />}
               {page.pinned && (
                 <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-gold-600 dark:text-gold-400 uppercase tracking-wide">
                   <Pin className="w-3 h-3" /> Pinned
                 </span>
               )}
-              {!handbook && <span className="text-[11px] text-stone-400 dark:text-stone-500">v{page.version}</span>}
+              {!handbook && !isStatute && <span className="text-[11px] text-stone-400 dark:text-stone-500">v{page.version}</span>}
             </div>
             <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{page.title}</h1>
-            {isRules ? (
+            {isStatute ? (
               <p className="text-sm text-stone-500 dark:text-stone-400">
-                {rules.part ? <>{rules.part.split(' — ').map((x) => x.charAt(0) + x.slice(1).toLowerCase()).join(' · ')} · </> : null}
-                {rules.sections.length} section{rules.sections.length === 1 ? '' : 's'} · {rules.issuance}, effective {fmtDate(rules.effective)} ·{' '}
-                <a href={rules.officialUrl} target="_blank" rel="noopener noreferrer" className="text-gold-600 dark:text-gold-400 hover:underline">Official text</a>
+                {statute.descriptor}{statute.effectiveOn ? ` · effective ${fmtDate(statute.effectiveOn)}` : ''}
               </p>
             ) : page.summary && <p className="text-sm text-stone-500 dark:text-stone-400">{page.summary}</p>}
-            {!isRules && <div className="flex items-center gap-4 text-xs text-stone-400 dark:text-stone-500 flex-wrap">
+            {!isStatute && <div className="flex items-center gap-4 text-xs text-stone-400 dark:text-stone-500 flex-wrap">
               <span className="flex items-center gap-1.5">
                 {page.generated_by === 'manual' ? <User className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
                 {page.generated_by === 'manual' ? (page.author_name || 'The firm') : `Drafted by ${page.model_used ?? 'AI'}`}
@@ -234,10 +228,13 @@ export default function LibraryPageDetail({ page: initial, citations, contributo
             </div>}
           </div>
 
+          {isStatute ? (
+            <StatuteReader doc={statute} prefaceHtml={page.content_md ?? ''} mayReview={isReviewer(role)} />
+          ) : (
           <div className={`grid gap-6 ${plain ? 'xl:grid-cols-[1fr_224px]' : 'lg:grid-cols-[1fr_300px]'}`}>
             <div className="min-w-0">
               {html ? (
-                <HtmlArticle html={page.content_md ?? ''} initialAnchor={initialAnchor} />
+                <HtmlArticle html={page.content_md ?? ''} />
               ) : (
                 <div className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl shadow-sm p-6 sm:p-8">
                   <article className="prose-kb text-sm leading-relaxed">
@@ -289,31 +286,8 @@ export default function LibraryPageDetail({ page: initial, citations, contributo
               </aside>
             )}
           </div>
-          {rules && (
-            <div className="flex justify-end pt-2">
-              <RuleNav rules={rules} />
-            </div>
           )}
         </>
-      )}
-    </div>
-  );
-}
-
-/** Previous / next rule in the same book. */
-function RuleNav({ rules }: { rules: RulesPageMeta }) {
-  const cls = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-color)] text-stone-600 dark:text-stone-400 hover:border-gold-300 dark:hover:border-gold-700 hover:text-gold-600 dark:hover:text-gold-400 transition-colors max-w-[16rem]';
-  return (
-    <div className="flex items-center gap-2">
-      {rules.prev && (
-        <Link href={`/dashboard/library/${rules.prev.id}`} className={cls} title={rules.prev.title}>
-          <ArrowLeft className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">{rules.prev.title}</span>
-        </Link>
-      )}
-      {rules.next && (
-        <Link href={`/dashboard/library/${rules.next.id}`} className={cls} title={rules.next.title}>
-          <span className="truncate">{rules.next.title}</span> <ArrowRight className="w-3.5 h-3.5 shrink-0" />
-        </Link>
       )}
     </div>
   );
@@ -363,28 +337,11 @@ function parseHeadings(html: string): { headings: TocHeading[]; processedHtml: s
   return { headings, processedHtml };
 }
 
-function HtmlArticle({ html, initialAnchor = null }: { html: string; initialAnchor?: string | null }) {
+function HtmlArticle({ html }: { html: string }) {
   const [activeId, setActiveId] = useState('');
   const contentRef = useRef<HTMLDivElement>(null);
   const { headings, processedHtml } = useMemo(() => parseHeadings(html), [html]);
   const hasToc = headings.length > 2;
-
-  // Opened at a section (?section=N): scroll to it once the article is in the DOM.
-  useEffect(() => {
-    if (!initialAnchor) return;
-    let tries = 0;
-    const tick = () => {
-      const el = document.getElementById(initialAnchor);
-      if (el) {
-        el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-        el.classList.add('scroll-mt-24');
-        return;
-      }
-      if (tries++ < 20) timer = setTimeout(tick, 100);
-    };
-    let timer = setTimeout(tick, 0);
-    return () => clearTimeout(timer);
-  }, [initialAnchor]);
 
   useEffect(() => {
     if (!headings.length) return;

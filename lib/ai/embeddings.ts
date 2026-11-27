@@ -99,6 +99,7 @@ export type SourceType =
   | 'meeting'
   | 'kb_page'
   | 'court_rule'
+  | 'code_provision'
   | 'affidavit_note'
   | 'red_team_note';
 

@@ -95,5 +95,6 @@
   "20261123_feedback_dismissed.sql": "20261122083144",
   "20261123_retire_filings_view_readers.sql": "20261122083212",
   "20261123_drop_filings_view.sql": "20261122083735",
-  "20261123_sidebar_layout.sql": "20261122083216"
+  "20261123_sidebar_layout.sql": "20261122083216",
+  "20261125_legal_codes.sql": "20261124193823"
 }

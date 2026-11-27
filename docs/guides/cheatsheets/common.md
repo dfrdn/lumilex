@@ -12,7 +12,7 @@ Full guide: [The Basics](../common.md) · All times Manila, all amounts ₱
 | File leave / reimbursement / feedback | `/dashboard` → **Requests** menu → track in **My Requests** |
 | Search (jump to a thing) | **⌘K** → navigate mode |
 | Search (find a document) | **⌘K** → Search mode, or Search (`/dashboard/search`) — **Exact** matches first; quote a phrase |
-| Firm guides, policies, Rules of Court | Library (`/dashboard/library`) |
+| Firm guides, policies, codes, Rules of Court | Library (`/dashboard/library`) |
 | PH case law | Search → **Jurisprudence** tab (juris.ph — verify before citing) |
 | Change password / photo / nickname | your picture (top right) → **My Settings** → **Security** / **Profile** tab |
 | Enable push | Settings → **Notifications** → **Browser push notifications** (off by default) → **Send test push** |

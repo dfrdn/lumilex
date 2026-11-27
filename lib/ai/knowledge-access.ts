@@ -9,12 +9,12 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  * site: matter-scoped sources need `has_matter_access`, Library pages need
  * the page itself — some are limited to roles, and an unpublished page is not
  * an answer yet — and firm-wide sources (incoming files and their analyses,
- * the Rules of Court) pass as-is, the same split the RLS policies on those
+ * the Rules of Court and the codes) pass as-is, the same split the RLS policies on those
  * tables make.
  */
 
 /** Source types every active team member can read regardless of matter. */
-export const FIRM_WIDE_SOURCE_TYPES: ReadonlySet<string> = new Set(['file', 'file_analysis', 'court_rule']);
+export const FIRM_WIDE_SOURCE_TYPES: ReadonlySet<string> = new Set(['file', 'file_analysis', 'court_rule', 'code_provision']);
 
 /** Library pages: checked page by page against the viewer's own RLS. */
 export const LIBRARY_SOURCE_TYPES: ReadonlySet<string> = new Set(['kb_page']);

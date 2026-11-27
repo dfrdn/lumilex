@@ -6,7 +6,8 @@ import { sectionOf } from '@/lib/library/model';
  * are AI output — the backfill reads closed matters through Claude and the
  * pages are indexed through Voyage — so they follow the `ai_search` switch the
  * old Knowledge Base page sat behind. The handbook is the firm's own writing
- * and the Rules of Court are the Supreme Court's; both are always shown.
+ * and the codes and Rules of Court are the law's own text; both are always
+ * shown.
  * Server-only: it reads the feature matrix.
  */
 export async function showsDistilled(firmId: string): Promise<boolean> {

@@ -10,7 +10,8 @@ import { KB_KIND_LABELS, type KbKind, type KbStatus } from '@/lib/ai/kb-types';
 export const HANDBOOK_KINDS = ['guide', 'policy', 'reference', 'announcement'] as const;
 export type HandbookKind = (typeof HANDBOOK_KINDS)[number];
 export const RULES_KIND = 'rules_of_court' as const;
-export type LibraryKind = KbKind | HandbookKind | typeof RULES_KIND;
+export const CODE_KIND = 'legal_code' as const;
+export type LibraryKind = KbKind | HandbookKind | typeof RULES_KIND | typeof CODE_KIND;
 export type LibraryStatus = KbStatus;
 export type ContentFormat = 'md' | 'html';
 
@@ -21,6 +22,7 @@ export const LIBRARY_KIND_LABELS: Record<LibraryKind, string> = {
   reference: 'Reference',
   announcement: 'Announcement',
   rules_of_court: 'Rules of Court',
+  legal_code: 'Code',
 };
 
 export type LibrarySection = 'handbook' | 'distilled' | 'rules';
@@ -28,14 +30,14 @@ export type LibrarySection = 'handbook' | 'distilled' | 'rules';
 export const SECTION_LABELS: Record<LibrarySection, string> = {
   handbook: 'Firm handbook',
   distilled: 'From our matters',
-  rules: 'Rules of Court',
+  rules: 'Codes & Rules of Court',
 };
 
 /** Kinds shown under each section, in display order. */
 export const SECTION_KINDS: Record<LibrarySection, LibraryKind[]> = {
   handbook: ['guide', 'policy', 'reference', 'announcement'],
   distilled: ['doctrine', 'template_clause', 'playbook', 'evidence_rule', 'court', 'judge', 'opposing_counsel', 'opposing_party', 'general'],
-  rules: [RULES_KIND],
+  rules: [CODE_KIND, RULES_KIND],
 };
 
 export const STATUS_LABELS: Record<LibraryStatus, string> = {
@@ -50,8 +52,9 @@ export function isHandbookKind(kind: string): kind is HandbookKind {
   return (HANDBOOK_KINDS as readonly string[]).includes(kind);
 }
 
+/** The law itself: a code or a book of the Rules of Court. Its text changes by re-import, never by hand. */
 export function isRulesKind(kind: string): boolean {
-  return kind === RULES_KIND;
+  return kind === RULES_KIND || kind === CODE_KIND;
 }
 
 export function sectionOf(kind: string): LibrarySection {
@@ -82,7 +85,7 @@ export function canAuthorHandbook(role: string | null | undefined): boolean {
 
 /** Who may edit the content of a page of this kind. */
 export function canEditKind(role: string | null | undefined, kind: string): boolean {
-  // The Rules of Court are the Supreme Court's text; they change by re-import, never by hand.
+  // The codes and the Rules are the law's own text; they change by re-import, never by hand.
   if (isRulesKind(kind)) return false;
   return isHandbookKind(kind) ? canAuthorHandbook(role) : isReviewer(role);
 }

@@ -14,8 +14,6 @@ import {
   HANDBOOK_KINDS, SECTION_KINDS, SECTION_LABELS, canAuthorHandbook, isReviewer, kindLabel, needsReview, sectionOf,
   type HandbookKind, type LibraryPageSummary, type LibrarySection,
 } from '@/lib/library/model';
-import { sourceLabel } from '@/lib/rules/model';
-import type { RuleSource } from '@/lib/rules/parse-rules-of-court';
 
 const ResourceEditor = dynamic(() => import('./ResourceEditor'), { ssr: false });
 
@@ -25,13 +23,12 @@ const SECTION_TONE: Record<LibrarySection, string> = {
   rules: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300',
 };
 
-const RULE_SLUG_RE = /^rules-of-court-(civil|criminal|evidence)-rule-(\d+)$/;
-const RULE_SOURCE_ORDER: RuleSource[] = ['civil', 'criminal', 'evidence'];
+// Codes first, then the books of the Rules in the order the Court numbers them.
+const LAW_ORDER = ['legal-code-labor', 'legal-code-rcc', 'rules-of-court-civil', 'rules-of-court-criminal', 'rules-of-court-evidence'];
 
-/** Which publication and rule number a Rules of Court page is, from its slug. */
-function ruleInfo(slug: string): { source: RuleSource; rule: number } | null {
-  const m = RULE_SLUG_RE.exec(slug);
-  return m ? { source: m[1] as RuleSource, rule: Number(m[2]) } : null;
+function lawRank(slug: string): number {
+  const i = LAW_ORDER.indexOf(slug);
+  return i === -1 ? LAW_ORDER.length : i;
 }
 
 type StatusFilter = 'all' | 'published' | 'review';
@@ -57,7 +54,6 @@ export default function LibraryPage({ role, showDistilled }: Props) {
 
   const [section, setSection] = useState<'all' | LibrarySection>(searchParams.get('section') === 'rules' ? 'rules' : 'all');
   const [kind, setKind] = useState('');
-  const [ruleSource, setRuleSource] = useState<RuleSource | ''>('');
   const [status, setStatus] = useState<StatusFilter>(searchParams.get('status') === 'review' ? 'review' : 'all');
   const [q, setQ] = useState('');
   const [creating, setCreating] = useState(false);
@@ -94,34 +90,29 @@ export default function LibraryPage({ role, showDistilled }: Props) {
   }, [pages, section]);
 
   const rulesCount = useMemo(() => pages.filter((p) => sectionOf(p.kind) === 'rules').length, [pages]);
-  const ruleSourcesPresent = useMemo(() => {
-    const present = new Set(pages.map((p) => ruleInfo(p.slug)?.source).filter(Boolean));
-    return RULE_SOURCE_ORDER.filter((src) => present.has(src));
+  const lawSummary = useMemo(() => {
+    const law = pages.filter((p) => sectionOf(p.kind) === 'rules');
+    const codes = law.filter((p) => p.kind === 'legal_code').length;
+    const books = law.length - codes;
+    return [codes && `${codes} code${codes === 1 ? '' : 's'}`, books && `${books} book${books === 1 ? '' : 's'} of the Rules`].filter(Boolean).join(' and ');
   }, [pages]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const list = pages.filter((p) => {
       const pageSection = sectionOf(p.kind);
-      // The 96 rules would bury the handbook in "All"; they have their own tab.
+      // The law has its own tab; "All" is the firm's own writing.
       if (section === 'all' && pageSection === 'rules' && !needle) return false;
       if (section !== 'all' && pageSection !== section) return false;
       if (kind && p.kind !== kind) return false;
-      if (ruleSource && ruleInfo(p.slug)?.source !== ruleSource) return false;
       if (status === 'published' && p.status !== 'published') return false;
       if (status === 'review' && !needsReview(p.status)) return false;
       if (needle && !`${p.title} ${p.summary}`.toLowerCase().includes(needle)) return false;
       return true;
     });
     if (section !== 'rules') return list;
-    // Rules read in the order the books print them, not by edit date.
-    return [...list].sort((a, b) => {
-      const ra = ruleInfo(a.slug);
-      const rb = ruleInfo(b.slug);
-      if (!ra || !rb) return 0;
-      return RULE_SOURCE_ORDER.indexOf(ra.source) - RULE_SOURCE_ORDER.indexOf(rb.source) || ra.rule - rb.rule;
-    });
-  }, [pages, section, kind, ruleSource, status, q]);
+    return [...list].sort((a, b) => lawRank(a.slug) - lawRank(b.slug) || a.title.localeCompare(b.title));
+  }, [pages, section, kind, status, q]);
 
   const sectionTabs: ReadonlyArray<readonly ['all' | LibrarySection, string]> = [
     ['all', 'All'],
@@ -154,7 +145,7 @@ export default function LibraryPage({ role, showDistilled }: Props) {
                 ? `${pages.length - rulesCount} page${pages.length - rulesCount === 1 ? '' : 's'} · ${[
                   'the firm handbook',
                   showDistilled ? 'what the system distilled from our matters' : null,
-                  rulesCount > 0 ? 'the Rules of Court' : null,
+                  rulesCount > 0 ? 'the codes and Rules of Court' : null,
                 ].filter(Boolean).join(', ').replace(/, ([^,]*)$/, ' and $1')}`
                 : ' '}
             </p>
@@ -195,7 +186,7 @@ export default function LibraryPage({ role, showDistilled }: Props) {
               type="button"
               role="tab"
               aria-selected={section === id}
-              onClick={() => { setSection(id); setKind(''); setRuleSource(''); }}
+              onClick={() => { setSection(id); setKind(''); }}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 section === id
                   ? 'bg-gold-50 text-gold-700 dark:bg-gold-400/15 dark:text-gold-300 ring-1 ring-inset ring-gold-300/60 dark:ring-gold-400/30'
@@ -227,16 +218,6 @@ export default function LibraryPage({ role, showDistilled }: Props) {
         )}
       </div>
 
-      {/* Rules of Court: one chip per book */}
-      {section === 'rules' && ruleSourcesPresent.length > 1 && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Pill active={ruleSource === ''} onClick={() => setRuleSource('')}>All books</Pill>
-          {ruleSourcesPresent.map((src) => (
-            <Pill key={src} active={ruleSource === src} onClick={() => setRuleSource(ruleSource === src ? '' : src)}>{sourceLabel(src)}</Pill>
-          ))}
-        </div>
-      )}
-
       {/* Kind chips */}
       {section !== 'rules' && kindsPresent.length > 1 && (
         <div className="flex flex-wrap items-center gap-1.5">
@@ -255,8 +236,8 @@ export default function LibraryPage({ role, showDistilled }: Props) {
         >
           <Scale className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span className="text-sm text-stone-700 dark:text-stone-200">
-            <span className="font-semibold">Rules of Court</span>
-            <span className="text-stone-500 dark:text-stone-400"> · {rulesCount} rules across Civil Procedure, Criminal Procedure, and Evidence, section by section</span>
+            <span className="font-semibold">{SECTION_LABELS.rules}</span>
+            <span className="text-stone-500 dark:text-stone-400"> · {lawSummary}, each read whole with every provision linkable</span>
           </span>
           <span className="ml-auto text-xs text-emerald-700 dark:text-emerald-300 shrink-0">Browse</span>
         </button>

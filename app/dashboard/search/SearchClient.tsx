@@ -35,7 +35,7 @@ interface SearchResponse {
 const CATEGORY_META: Record<KnowledgeCategory, { icon: typeof Scale; tone: string }> = {
   'Exact matches':  { icon: Quote,          tone: 'bg-gold-50 text-gold-800 dark:bg-gold-400/15 dark:text-gold-200 ring-gold-300/70 dark:ring-gold-400/30' },
   'Library':        { icon: Library,        tone: 'bg-violet-50 text-violet-800 dark:bg-violet-400/15 dark:text-violet-200 ring-violet-300/60 dark:ring-violet-400/30' },
-  'Rules of Court': { icon: BookMarked,     tone: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-200 ring-emerald-300/60 dark:ring-emerald-400/30' },
+  'Codes & Rules': { icon: BookMarked,     tone: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-200 ring-emerald-300/60 dark:ring-emerald-400/30' },
   'Matter Briefs':  { icon: Scale,          tone: 'bg-navy-100 text-navy-700 dark:bg-navy-400/15 dark:text-navy-200 ring-navy-200/60 dark:ring-navy-400/20' },
   'Pleadings':      { icon: ScrollText,     tone: 'bg-gold-100 text-gold-700 dark:bg-gold-400/15 dark:text-gold-300 ring-gold-200/60 dark:ring-gold-400/20' },
   'Memos':          { icon: FileText,       tone: 'bg-blue-100 text-blue-700 dark:bg-blue-400/15 dark:text-blue-300 ring-blue-200/60 dark:ring-blue-400/20' },
@@ -48,7 +48,7 @@ const CATEGORY_META: Record<KnowledgeCategory, { icon: typeof Scale; tone: strin
 };
 
 const CATEGORY_ORDER: KnowledgeCategory[] = [
-  'Exact matches', 'Library', 'Rules of Court', 'Matter Briefs', 'Pleadings', 'Memos', 'Client Letters', 'Status Reports',
+  'Exact matches', 'Library', 'Codes & Rules', 'Matter Briefs', 'Pleadings', 'Memos', 'Client Letters', 'Status Reports',
   'Hearings', 'Meetings', 'Files', 'Deliverables',
 ];
 

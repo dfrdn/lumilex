@@ -1,10 +1,13 @@
 /**
  * Load data/rules-of-court/sections.json (made by scripts/parse-rules-of-court.ts)
- * into one firm's Library: one kb_pages row per rule, one court_rule_sections
- * row per section, and — when the firm keeps vectors (`ai_search`) — one
- * embedding per section for Search. Idempotent: pages are matched by slug,
- * sections by (source, rule, section); only sections whose text changed are
- * re-embedded. Run it for every firm that should carry the Rules.
+ * into one firm's Library: one kb_pages row per book (Civil Procedure,
+ * Criminal Procedure, Evidence), which the Library renders whole from the
+ * sections; one court_rule_sections row per section; and — when the firm keeps
+ * vectors (`ai_search`) — one embedding per section for Search. Idempotent:
+ * pages are matched by slug, sections by (source, rule, section); only
+ * sections whose text changed are re-embedded. The one-page-per-rule pages of
+ * the first import are removed. Run it for every firm that should carry the
+ * Rules.
  *
  *   npx tsx scripts/import-rules-of-court.ts <firmIdOrSlug> [--source civil|criminal|evidence] [--dry-run] [--no-embed]
  *
@@ -32,7 +35,7 @@ async function main() {
   const { isFeatureAvailable } = await import('@/lib/firm/features');
   const { generateEmbeddingsForEntity } = await import('@/lib/ai/embeddings');
   const { SOURCE_META } = await import('@/lib/rules/parse-rules-of-court');
-  const { RULES_OF_COURT_KIND, ruleSlug, rulePageTitle, citationOf, sectionHeading, titleCase } = await import('@/lib/rules/model');
+  const { RULE_SOURCES, RULES_OF_COURT_KIND, rulesPartSlug, rulePageTitle, citationOf } = await import('@/lib/rules/model');
   type ParsedSection = import('@/lib/rules/parse-rules-of-court').ParsedSection;
   type RuleHeader = import('@/lib/rules/parse-rules-of-court').RuleHeader;
 
@@ -61,41 +64,31 @@ async function main() {
   }
 
   const data = JSON.parse(readFileSync(DATA, 'utf8')) as { rules: RuleHeader[]; sections: ParsedSection[] };
-  const rules = data.rules.filter((r) => (!only || r.source === only) && r.rule !== 144);
-  const sections = data.sections.filter((s) => !only || s.source === only);
   const supabase = getServiceDbForFirm(firm.id);
 
-  const tallies = { pagesInserted: 0, pagesUpdated: 0, sectionsInserted: 0, sectionsUpdated: 0, sectionsUnchanged: 0, embedded: 0 };
+  const tallies = { pagesInserted: 0, pagesUpdated: 0, sectionsInserted: 0, sectionsUpdated: 0, sectionsUnchanged: 0, embedded: 0, rulePagesRemoved: 0 };
   const toEmbed: { id: number; text: string; metadata: Record<string, unknown> }[] = [];
 
-  for (const rule of rules) {
-    const meta = SOURCE_META[rule.source];
-    const secs = sections.filter((s) => s.source === rule.source && s.rule === rule.rule).sort((a, b) => a.section - b.section);
-    const slug = ruleSlug(rule.source, rule.rule);
-    const deleted = secs.length === 0;
-    const title = rulePageTitle(rule.rule, rule.title) + (deleted ? ' (deleted)' : '');
+  for (const source of RULE_SOURCES.filter((s) => !only || s === only)) {
+    const meta = SOURCE_META[source];
+    const rules = data.rules.filter((r) => r.source === source && r.rule !== 144).sort((a, b) => a.rule - b.rule);
+    const secs = data.sections.filter((s) => s.source === source).sort((a, b) => a.rule - b.rule || a.section - b.section);
+    const slug = rulesPartSlug(source);
+    const title = meta.label;
+    const deletedRules = rules.filter((r) => !secs.some((s) => s.rule === r.rule));
 
-    const parts: string[] = [];
-    parts.push(
-      `<p class="lead">${esc(meta.label)} (${esc(meta.issuance)}), effective ${esc(fmtDate(meta.effective))}.` +
-        `${rule.part ? ` Under <em>${esc(titleCase(rule.part))}</em>.` : ''}` +
-        ` ${deleted ? 'This rule was deleted by the amendments.' : `${secs.length} section${secs.length === 1 ? '' : 's'}.`}` +
-        ` <a href="${esc(meta.url)}" target="_blank" rel="noopener noreferrer">Official text</a>.</p>`,
-    );
-    if (deleted && rule.source === 'civil' && rule.rule === 16) {
-      parts.push('<p>The 2019 amendments removed the motion to dismiss as a separate rule. Its grounds are now raised as affirmative defenses in the answer under Rule 8, Section 12, and the remaining motions to dismiss are governed by Rule 15, Section 12.</p>');
-    }
-    let lastHeading: string | null = null;
-    for (const s of secs) {
-      if (s.heading && s.heading !== lastHeading) {
-        parts.push(`<p><strong>${esc(s.heading)}</strong></p>`);
-        lastHeading = s.heading;
-      }
-      parts.push(`<h2>${esc(sectionHeading(s.section, s.title))}</h2>`);
-      for (const para of s.text.split('\n')) parts.push(`<p>${esc(para)}</p>`);
+    // A preface above the sections: the publication, and what the amendments took out.
+    const parts: string[] = [
+      `<p class="lead">${esc(meta.issuance)}, effective ${esc(fmtDate(meta.effective))}. Rules ${rules[0]?.rule}–${rules.at(-1)?.rule}, ${secs.length} sections.</p>`,
+    ];
+    for (const r of deletedRules) {
+      const note = source === 'civil' && r.rule === 16
+        ? ' Its grounds are now raised as affirmative defenses in the answer under Rule 8, Section 12, and the remaining motions to dismiss are governed by Rule 15, Section 12.'
+        : '';
+      parts.push(`<p>${esc(rulePageTitle(r.rule, r.title))} was deleted by the amendments.${esc(note)}</p>`);
     }
     const content = parts.join('\n');
-    const summary = `${meta.short} · ${deleted ? 'deleted by the 2019 amendments' : `${secs.length} section${secs.length === 1 ? '' : 's'}`} · ${meta.issuance}`;
+    const summary = `${meta.short} · Rules ${rules[0]?.rule}–${rules.at(-1)?.rule} · ${secs.length} sections · ${meta.issuance}`;
 
     let pageId: number;
     const { data: existing } = await supabase.from('kb_pages').select('id, title, content_md, summary').eq('slug', slug).maybeSingle();
@@ -164,7 +157,17 @@ async function main() {
         });
       }
     }
-    console.log(`${dryRun ? '(dry) ' : ''}${rule.source} ${title}: ${secs.length} sections`);
+
+    // The first import made a page per rule; the book's page replaces them.
+    const { data: rulePages } = await supabase.from('kb_pages').select('id, slug').eq('kind', RULES_OF_COURT_KIND).like('slug', `${slug}-rule-%`);
+    if (rulePages?.length) {
+      if (!dryRun) {
+        const { error } = await supabase.from('kb_pages').delete().in('id', rulePages.map((p) => p.id));
+        if (error) throw new Error(`remove rule pages ${slug}: ${error.message}`);
+      }
+      tallies.rulePagesRemoved += rulePages.length;
+    }
+    console.log(`${dryRun ? '(dry) ' : ''}${title}: ${secs.length} sections`);
   }
 
   if (embed && !dryRun && toEmbed.length > 0) {

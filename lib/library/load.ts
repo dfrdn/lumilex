@@ -1,59 +1,7 @@
 import { getSupabaseServerAuthClient } from '@/lib/supabase-server';
 import { sanitizeHandbookHtml } from '@/lib/sanitize-html';
-import { isRulesKind, type LibraryCitation, type LibraryContributor, type LibraryPageFull } from '@/lib/library/model';
-import { SOURCE_META, type RuleSource } from '@/lib/rules/parse-rules-of-court';
-import { sectionAnchor } from '@/lib/rules/model';
-
-export interface RulesPageMeta {
-  source: RuleSource;
-  sourceLabel: string;
-  issuance: string;
-  effective: string;
-  officialUrl: string;
-  rule: number;
-  part: string | null;
-  sections: { section: number; title: string; anchor: string }[];
-  prev: { id: number; title: string } | null;
-  next: { id: number; title: string } | null;
-}
-
-/** What the Library shows above a Rules of Court page: its publication and its neighbours. */
-async function loadRulesMeta(pageId: number): Promise<RulesPageMeta | null> {
-  const supabase = await getSupabaseServerAuthClient();
-  const { data: sections } = await supabase
-    .from('court_rule_sections')
-    .select('source, rule, part, section, title')
-    .eq('kb_page_id', pageId)
-    .order('section');
-  const first = sections?.[0];
-  if (!first) return null;
-  const source = first.source as RuleSource;
-  const meta = SOURCE_META[source];
-
-  const { data: siblings } = await supabase
-    .from('kb_pages')
-    .select('id, slug, title')
-    .eq('kind', 'rules_of_court')
-    .like('slug', `rules-of-court-${source}-rule-%`);
-  const ordered = (siblings ?? [])
-    .map((p) => ({ ...p, rule: Number(p.slug.split('-rule-')[1]) }))
-    .filter((p) => Number.isFinite(p.rule))
-    .sort((a, b) => a.rule - b.rule);
-  const at = ordered.findIndex((p) => p.id === pageId);
-
-  return {
-    source,
-    sourceLabel: meta.short,
-    issuance: meta.issuance,
-    effective: meta.effective,
-    officialUrl: meta.url,
-    rule: first.rule,
-    part: first.part,
-    sections: (sections ?? []).map((s) => ({ section: s.section, title: s.title, anchor: sectionAnchor(s.section, s.title) })),
-    prev: at > 0 ? { id: ordered[at - 1].id, title: ordered[at - 1].title } : null,
-    next: at >= 0 && at < ordered.length - 1 ? { id: ordered[at + 1].id, title: ordered[at + 1].title } : null,
-  };
-}
+import { type LibraryCitation, type LibraryContributor, type LibraryPageFull } from '@/lib/library/model';
+import { loadStatute, type StatuteDoc } from '@/lib/library/statute';
 
 /**
  * One Library page with its citations and contributing matters, names
@@ -68,7 +16,6 @@ export async function loadLibraryPage(id: number): Promise<{
   page: LibraryPageFull;
   citations: LibraryCitation[];
   contributors: LibraryContributor[];
-  rules: RulesPageMeta | null;
 } | null> {
   const supabase = await getSupabaseServerAuthClient();
   const { data: page } = await supabase.from('kb_pages').select('*').eq('id', id).maybeSingle();
@@ -121,6 +68,14 @@ export async function loadLibraryPage(id: number): Promise<{
     },
     citations: citationRows,
     contributors,
-    rules: isRulesKind(page.kind) ? await loadRulesMeta(id) : null,
   };
+}
+
+/**
+ * A code or a book of the Rules, read whole: the page and every provision.
+ * Kept apart from loadLibraryPage so the page API does not ship two
+ * thousand articles with every request.
+ */
+export async function loadStatutePage(page: { id: number; kind: string; slug: string }): Promise<StatuteDoc | null> {
+  return loadStatute(await getSupabaseServerAuthClient(), page);
 }
